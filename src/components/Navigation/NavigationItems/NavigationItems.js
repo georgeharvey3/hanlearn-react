@@ -6,8 +6,9 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 const navigationItems = () => (
     <ul className={classes.NavigationItems}>
-        <NavigationItem link="/" active>First</NavigationItem>
-        <NavigationItem link="/">Second</NavigationItem>
+        <NavigationItem link="/">First</NavigationItem>
+        <NavigationItem link="/add-words">Second</NavigationItem>
+        <NavigationItem link="/test-words">Third</NavigationItem>
     </ul>
 )
 
