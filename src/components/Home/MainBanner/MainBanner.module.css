@@ -1,0 +1,69 @@
+.MainBanner {
+    background-color: #AA381E;
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 24px 12px;
+    padding-top: 60px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    font-size: 1.1em;
+}
+
+.MainBanner section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    color: #E6E0AE;
+}
+
+.Logo {
+    background-color: #E6E0AE;
+    border-radius: 50%;
+}
+
+.MainBanner h2, p {
+    width: 100%;
+}
+
+.Buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 24px 0;
+    margin-bottom: 72px;
+}
+
+@media (min-width: 1000px) {
+    .Logo {
+        height: 300px;
+    }
+}
+
+@media (min-width: 854) {
+    .MainBanner {
+        padding-top: 36px
+    }
+    .Buttons {
+        margin-bottom: 32px
+    }
+}
+
+@media (max-width: 599px) {
+    .MainBanner {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 499px) {
+    .MainBanner {
+        width: 100%;
+        padding-bottom: 0;
+    }
+    .MainBanner .DesktopOnly {
+        display: none;
+    }
+}

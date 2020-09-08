@@ -11,7 +11,7 @@ const toolbar = props => (
         <DrawerToggle clicked={props.drawerToggleClicked}/>
         <h2 className={classes.PhoneOnly}>HanLearn</h2>
         <div className={[classes.Logo, classes.DesktopOnly].join(' ')}>    
-            <Logo />
+            <Logo colour='red'/>
             <h3 className={classes.DesktopOnly}>HanLearn</h3>
         </div>
         <nav className={classes.DesktopOnly}>
