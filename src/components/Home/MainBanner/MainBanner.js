@@ -4,7 +4,7 @@ import classes from './MainBanner.module.css';
 
 import Aux from '../../../hoc/Aux';
 import Logo from '../../Logo/Logo';
-import Button from '../../UI/Button/Button';
+import Button from '../../UI/Buttons/Button/Button';
 
 const mainBanner = () => (
     <Aux>

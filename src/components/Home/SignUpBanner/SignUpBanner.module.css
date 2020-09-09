@@ -1,6 +1,6 @@
 .SignUpBanner {
     width: 95%;
-    height: 300px;
+    height: auto;
     border-radius: 10px;
     background-color: #E6E0AE;
     margin: 10px auto;
@@ -16,5 +16,5 @@
 }
 
 .SignUpBanner h3, p {
-    margin: 0;
+    margin: 10px 0;
 }

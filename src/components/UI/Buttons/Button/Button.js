@@ -9,7 +9,11 @@ const button = (props) => {
         attachedClasses = [classes.Button, classes.Red];
     }
     return (
-        <button className={attachedClasses.join(' ')}>{props.children}</button>
+        <button 
+            className={attachedClasses.join(' ')}
+            onClick={props.clicked}>
+                {props.children}
+        </button>
     );
 }
 
