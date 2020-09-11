@@ -32,6 +32,7 @@ const input = props => (
         type="text" 
         placeholder={props.placeholder} 
         onChange={props.changed}
+        onKeyPress={props.keyPressed}
         value={props.value}
         onFocus={props.focussed}
         onBlur={props.blurred}/>

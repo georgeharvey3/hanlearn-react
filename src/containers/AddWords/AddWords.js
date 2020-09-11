@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-
-import classes from './AddWords.module.css';
+import { connect } from 'react-redux';
 
 import Aux from '../../hoc/Aux';
 import MainBanner from '../../components/AddWords/MainBanner';
 import Table from '../../components/UI/Table/Table';
 import TableRow from '../../components/UI/Table/TableRow/TableRow';
 import Buttons from '../../components/UI/Buttons/Buttons';
+import * as actionTypes from '../../store/words/actions';
 
 let dummyWords = [
     {
@@ -23,7 +23,18 @@ let dummyWords = [
         character: '非常',
         pinyin: 'fei1 chang2',
         meaning: 'very'
+    },
+    {
+        character: '你好',
+        pinyin: 'ni3 hao3',
+        meaning: 'hello'
+    },
+    {
+        character: '再见',
+        pinyin: 'zai4 jian4',
+        meaning: 'goodbye'
     }
+
 ];
 
 let testDict = {
@@ -58,7 +69,6 @@ let testDict = {
 class AddWords extends Component {
 
     state = {
-        words: [],
         newWord: ''
     }
 
@@ -66,56 +76,31 @@ class AddWords extends Component {
         this.setState({words: dummyWords})
     }
 
-    onRemoveWordHandler = (word) => {
-        this.setState(prevState => {
-            let newWords = prevState.words
-            let removeIndex = newWords.indexOf(word);
-            if (removeIndex >= 0) {
-                newWords.splice(removeIndex, 1);
-            }
-            return {
-                words: newWords
-            }
-        });
-    }
-
-    onClearHandler = () => {
-        this.setState({words: []});
-    }
-
     onSubmitWord = (event) => {
         event.preventDefault();
         let wordResult = testDict[this.state.newWord];
-        this.setState(prevState => {
-            return {
-                words: prevState.words.concat(wordResult),
-                newWord: ''
-            }
+        this.props.onAddWord(wordResult);
+        this.setState({
+            newWord: ''
         });
     }
 
     onInputChangedHandler = (event) => {
         this.setState({newWord: event.target.value})
     }
-
-    keyPressHandler (event) {
-        if (event.keyCode !== 13) {
-            return;
-        }
-        this.onSubmitWord(event.target.value);
-    }
+    
 
     render() {
-        let tableRows = this.state.words.map((row, index) => (
+        let tableRows = this.props.words.map((row, index) => (
             <TableRow 
-                removed={() => this.onRemoveWordHandler(row)} 
+                removed={() => this.props.onRemoveWord(index)} 
                 key={index} removable>
                     {[row.character, row.pinyin, row.meaning]}
             </TableRow>
         ));
 
         return (
-            <div>
+            <Aux>
                 <MainBanner 
                     inputChanged={this.onInputChangedHandler}
                     newWord={this.state.newWord}
@@ -124,9 +109,23 @@ class AddWords extends Component {
                     {tableRows}
                 </Table>
                 <Buttons clickedHandlers={[null, this.onClearHandler]}>{['Test', 'Clear']}</Buttons>
-            </div>
+            </Aux>
         );
     }
 }
 
-export default AddWords;
+const mapStateToProps = (state) => {
+    return {
+        words: state.words
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onAddWord: word => dispatch({type: actionTypes.ADD_WORD, word: word}),
+        onRemoveWord: index => dispatch({type: actionTypes.REMOVE_WORD, index: index}),
+        onClearWords: () => dispatch({type: actionTypes.CLEAR_WORDS})
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddWords);

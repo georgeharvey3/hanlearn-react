@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import './App.css';
 
 import Layout from './components/Layout/Layout';
 import Home from './containers/Home/Home';
 import AddWords from './containers/AddWords/AddWords';
+import TestWords from './containers/TestWords/TestWords';
 
 class App extends Component {
   render () {
@@ -14,6 +15,7 @@ class App extends Component {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/add-words" component={AddWords} />
+            <Route path="/test-words" component={TestWords} />
           </Switch>
         </Layout>
       </div>
@@ -21,4 +23,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);

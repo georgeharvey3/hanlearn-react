@@ -8,14 +8,13 @@
     align-items: center;
     padding: 10px 0;
     box-sizing: border-box;
-    background-color: rgb(46, 46, 46);
 }
 
 .DrawerToggle div {
     width: 80%;
-    border-radius: 7px;
-    height: 3px;
-    background-color: gray;
+    border-radius: 25px;
+    height: 4px;
+    background-color: rgb(94, 94, 94);
 }
 
 @media (min-width: 500px) {

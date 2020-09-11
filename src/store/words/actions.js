@@ -1,0 +1,3 @@
+export const ADD_WORD = 'ADD_WORD';
+export const REMOVE_WORD = 'REMOVE_WORD';
+export const CLEAR_WORDS = 'CLEAR_WORDS';

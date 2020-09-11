@@ -10,7 +10,7 @@ class MainBanner extends Component {
         text: "Add words to your bank..."
     }
     onFocusInput = () => {
-        this.setState({text: "Enter a Chinese word (e.g. 你好)"})
+        this.setState({text: "Enter a Chinese word..."})
     }
 
     onBlurInput = () => {

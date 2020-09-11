@@ -1,5 +1,7 @@
 .TableBox {
     height: 250px;
+    width: 80%;
+    max-width: 700px;
     overflow-y: auto; 
     margin: 0 auto;
 }
@@ -30,6 +32,7 @@
 
 .Table {
     margin: 0 auto;
+    width: 100%;
     border-collapse: collapse;
 }
 
@@ -50,4 +53,14 @@
 
 .Table tr:nth-child(even) {
     background-color: rgba(134, 45, 24, 30%);
+}
+
+@media (min-width: 500px) {
+    
+}
+
+@media (min-height: 750px) {
+    .TableBox {
+        height: 400px;
+    }
 }
