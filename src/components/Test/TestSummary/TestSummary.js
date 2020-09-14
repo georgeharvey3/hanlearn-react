@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import classes from './TestSummary.module.css';
-
 import Aux from '../../../hoc/Aux';
 import Table from '../../UI/Table/Table';
 import TableRow from '../../UI/Table/TableRow/TableRow';

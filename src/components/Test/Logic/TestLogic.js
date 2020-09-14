@@ -11,7 +11,7 @@ export const chooseTestSet = (allWords, numWords) => {
 
 export const setPermList = function (testSet) {
     let nums = Array.from(Array(testSet.length).keys());
-    let qaCombinations = ['PM', 'PC', 'MC', 'MP'];
+    let qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC'];
 
     let permList = [];
 
@@ -63,6 +63,7 @@ export const assignQA = function (testSet, permList, charSet) {
 
     return {
         perm: perm,
+        chosenCharacter: ranWord[charSet],
         answer: Ax,
         answerCategory: ACs,
         question: Qx,

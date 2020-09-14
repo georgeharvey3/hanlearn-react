@@ -1,7 +1,34 @@
 import * as actionTypes from './actions';
 
 const initialState = {
-    words: []
+    words: [
+        {
+            character: '雨伞',
+            pinyin: 'yu3 san3',
+            meaning: 'umbrella'
+        },
+        {
+            character: '特别',
+            pinyin: 'te4 bie2',
+            meaning: 'special'
+        },
+        {
+            character: '非常',
+            pinyin: 'fei1 chang2',
+            meaning: 'very'
+        },
+        {
+            character: '你好',
+            pinyin: 'ni3 hao3',
+            meaning: 'hello'
+        },
+        {
+            character: '再见',
+            pinyin: 'zai4 jian4',
+            meaning: 'goodbye'
+        }
+    
+    ]
 }
 
 const reducer = (state=initialState, action) => {
@@ -12,11 +39,8 @@ const reducer = (state=initialState, action) => {
                 words: state.words.concat(action.word)
             }
         case actionTypes.REMOVE_WORD:
-            console.log(action.index);
             let newWords = state.words.slice();
-            console.log('Before', newWords);
             newWords.splice(action.index, 1);
-            console.log('After', newWords);
             return {
                 ...state,
                 words: newWords

@@ -8,6 +8,13 @@ import AddWords from './containers/AddWords/AddWords';
 import TestWords from './containers/TestWords/TestWords';
 
 class App extends Component {
+  componentDidMount = () => {
+    fetch('/movies').then(response => 
+      response.json().then(data => {
+        console.log(data);
+      })
+    );
+  }
   render () {
     return (
       <div className="App">
