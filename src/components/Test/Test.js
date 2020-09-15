@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import UIfx from 'uifx';
+import {Howl, Howler} from 'howler';
 
 import classes from './Test.module.css';
 
@@ -11,38 +12,28 @@ import ProgressBar from './ProgressBar/ProgressBar';
 import Input from '../UI/Input/Input';
 import Buttons from '../UI/Buttons/Buttons';
 import TestSummary from './TestSummary/TestSummary';
+import PictureButton from '../UI/Buttons/PictureButton/PictureButton';
+
+import micPic from '../../assets/images/microphone.png';
+import speakerPic from '../../assets/images/speaker.png';
+
+import successSound from '../../assets/sounds/success1.wav';
+import failSound from '../../assets/sounds/failure1.wav';
 
 let NUM_WORDS = 3;
-let CHAR_SET = 'character';
+let CHAR_SET = 'simp';
 
-let dummyWords = [
-    {
-        character: '雨伞',
-        pinyin: 'yu3 san3',
-        meaning: ['umbrella']
-    },
-    {
-        character: '特别',
-        pinyin: 'te4 bie2',
-        meaning: ['special']
-    },
-    {
-        character: '非常',
-        pinyin: 'fei1 chang2',
-        meaning: ['very']
-    },
-    {
-        character: '你好',
-        pinyin: 'ni3 hao3',
-        meaning: ['hello']
-    },
-    {
-        character: '再见',
-        pinyin: 'zai4 jian4',
-        meaning: ['goodbye']
-    }
+let pinyinConverter = require("pinyin");
 
-];
+const beep = new Howl({
+    src: [successSound],
+    volume: 0.5
+});
+
+const fail = new Howl({
+    src: [failSound],
+    volume: 0.5
+});
 
 class Test extends Component {
     state = {
@@ -61,30 +52,18 @@ class Test extends Component {
         initNumPerms: 0,
         idkList: [],
         scoreList: [],
-        testFinished: false
+        testFinished: false,
+        showInput: false,
+        drawnCharacters: [],
+        numSpeakTries: 0
     }
 
     componentDidMount () {
-        console.log('CDM Called');
-        let allWords = dummyWords.slice();
-        let selectedWords = testLogic.chooseTestSet(allWords, NUM_WORDS)
-        let permList = testLogic.setPermList(selectedWords);
-        let initialVals = testLogic.assignQA(selectedWords, permList, CHAR_SET);
-        this.setState({
-            testSet: selectedWords,
-            permList: permList,
-            perm: initialVals.perm,
-            answer: initialVals.answer,
-            answerCategory: initialVals.answerCategory,
-            question: initialVals.question,
-            questionCategory: initialVals.questionCategory,
-            chosenCharacter: initialVals.chosenCharacter,
-            initNumPerms: permList.length
-        });
-
+        this.onInitialiseTestSet();
     }
 
     componentDidUpdate = (prevProps, prevState) => {
+
         if (prevState.perm !== this.state.perm) {
             if (this.state.questionCategory === 'pinyin') {
                 this.onSpeakPinyin(this.state.chosenCharacter);
@@ -106,30 +85,65 @@ class Test extends Component {
         }
     }
 
+    onInitialiseTestSet = () => {
+        let allWords = this.props.words.slice();
+        if (allWords.length === 0) {
+            return;
+        }
+        let selectedWords = testLogic.chooseTestSet(allWords, NUM_WORDS)
+        let permList = testLogic.setPermList(selectedWords);
+        let initialVals = testLogic.assignQA(selectedWords, permList, CHAR_SET);
+        this.setState({
+            testSet: selectedWords,
+            permList: permList,
+            perm: initialVals.perm,
+            answer: initialVals.answer,
+            answerCategory: initialVals.answerCategory,
+            question: initialVals.question,
+            questionCategory: initialVals.questionCategory,
+            chosenCharacter: initialVals.chosenCharacter,
+            initNumPerms: permList.length
+        });
+
+    }
+
     onNewCharacterOne = (char) => {
         document.getElementById('character-target-div').innerHTML = "";
+        let flashChar = !this.state.drawnCharacters.includes(char);
+
         let writer = window.HanziWriter.create('character-target-div', char, {
             width: 150,
             height: 150,
             padding: 20,
             delayBetweenStrokes: 300,
             showOutline: false,
-            showCharacter: false
+            showCharacter: flashChar,
+            showHintAfterMisses: 100
         });
         writer.quiz({
-            onComplete: this.onCorrectAnswer
+            onComplete: () => {
+                this.setState(prevState => {
+                    return {
+                        drawnCharacters: prevState.drawnCharacters.concat(char)
+                    }
+                });
+                this.onCorrectAnswer();
+            }
         });
     }
 
     onNewCharacterTwo = (char) => {
         document.getElementById('character-target-div').innerHTML = "";
+        let flashChar = !this.state.drawnCharacters.includes(char);
+
         let writer = window.HanziWriter.create('character-target-div', char[0], {
             width: 150,
             height: 150,
             padding: 20,
             delayBetweenStrokes: 300,
             showOutline: false,
-            showCharacter: false
+            showCharacter: flashChar,
+            showHintAfterMisses: 100
         });
         writer.quiz({
             onComplete: () => {
@@ -140,10 +154,16 @@ class Test extends Component {
                     padding: 20,
                     delayBetweenStrokes: 300,
                     showOutline: false,
-                    showCharacter: false
+                    showCharacter: flashChar,
+                    showHintAfterMisses: 100
                 });
                 writer.quiz({
                     onComplete: () => {
+                        this.setState(prevState => {
+                            return {
+                                drawnCharacters: prevState.drawnCharacters.concat(char)
+                            }
+                        });
                         document.getElementById('character-target-div').innerHTML = "";
                         this.onCorrectAnswer();
                     }
@@ -154,13 +174,16 @@ class Test extends Component {
 
     onNewCharacterThree = (char) => {
         document.getElementById('character-target-div').innerHTML = "";
+        let flashChar = !this.state.drawnCharacters.includes(char);
+
         let writer = window.HanziWriter.create('character-target-div', char[0], {
             width: 150,
             height: 150,
             padding: 20,
             delayBetweenStrokes: 300,
             showOutline: false,
-            showCharacter: false
+            showCharacter: flashChar,
+            showHintAfterMisses: 100
         });
         writer.quiz({
             onComplete: () => {
@@ -171,7 +194,8 @@ class Test extends Component {
                     padding: 20,
                     delayBetweenStrokes: 300,
                     showOutline: false,
-                    showCharacter: false
+                    showCharacter: flashChar,
+                    showHintAfterMisses: 100
                 });
                 writer.quiz({
                     onComplete: () => {
@@ -182,10 +206,16 @@ class Test extends Component {
                             padding: 20,
                             delayBetweenStrokes: 300,
                             showOutline: false,
-                            showCharacter: false
+                            showCharacter: flashChar,
+                            showHintAfterMisses: 100
                         });
                         writer.quiz({
                             onComplete: () => {
+                                this.setState(prevState => {
+                                    return {
+                                        drawnCharacters: prevState.drawnCharacters.concat(char)
+                                    }
+                                });
                                 document.getElementById('character-target-div').innerHTML = "";
                                 this.onCorrectAnswer();
                             }
@@ -210,6 +240,7 @@ class Test extends Component {
 
     onCorrectAnswer = () => {
         this.setState({result: 'Correct!'});
+        beep.play();
         let permIndex = this.state.permList.indexOf(this.state.perm);
         let newPermList = this.state.permList.slice()
 
@@ -229,7 +260,9 @@ class Test extends Component {
                         question: newQuestion.question,
                         questionCategory: newQuestion.questionCategory,
                         chosenCharacter: newQuestion.chosenCharacter,
-                        result: ''
+                        result: '',
+                        answerInput: '',
+                        showInput: false
                     });
                 }
                 .bind(this),
@@ -243,21 +276,44 @@ class Test extends Component {
     }
 
     onSubmitAnswer = () => {
-        if (this.state.answerCategory == 'pinyin' && this.state.answerInput.replace(' ', '').toLowerCase() == this.state.answer.replace(' ', '') ||
-                this.state.answerCategory == 'meaning' && this.state.answer.includes(this.state.answerInput.toLowerCase())) {
+        /* eslint-disable */
+        if (this.state.answerCategory === 'pinyin' && this.state.answerInput.replace(' ', '').toLowerCase() == this.state.answer.replace(' ', '') || 
+                this.state.answerCategory === 'meaning' && this.state.answer.includes(this.state.answerInput.toLowerCase())) {
             this.onCorrectAnswer();
-            
-        } else if (this.state.answerCategory == 'pinyin') {
+        /* eslint-enable */
+        } else if (this.state.answerCategory === 'pinyin') {
             let resultString = testLogic.toneChecker(this.state.answerInput.toLowerCase(), this.state.answer);
             this.setState({result: resultString});
         } else {
+            fail.play();
             this.setState({result: 'Try Again'});
         }
     }
 
     submitSpeech = (speech) => {
+        let asPinyin = pinyinConverter(speech, {
+            style: pinyinConverter.STYLE_TONE2
+        });
+
         if (speech === this.state.chosenCharacter) {
             this.onCorrectAnswer();
+        } else if (asPinyin.join(' ') === this.state.answer.slice(1, this.state.answer.length-1)) {
+            this.onCorrectAnswer();
+        } else {
+            fail.play();
+            if (this.state.numSpeakTries > 1) {
+                this.setState({
+                    result: `We heard: '${asPinyin.join(' ')}', which is wrong. Try again...`,
+                    showInput: true
+                });
+            } else {
+                this.setState(prevState => {
+                    return {
+                        result: `We heard: '${asPinyin.join(' ')}', which is wrong. Try again...`,
+                        numSpeakTries: prevState.numSpeakTries + 1
+                    }
+                });
+            }
         }
     }
 
@@ -265,6 +321,7 @@ class Test extends Component {
         let synth = window.speechSynthesis;
         let utterThis = new SpeechSynthesisUtterance(word);
         utterThis.lang = 'zh-CN';
+        synth.cancel();
         synth.speak(utterThis);
     }
 
@@ -276,6 +333,7 @@ class Test extends Component {
             let result = event.results[0][0].transcript;
             this.submitSpeech(result);
         });
+        this.setState({result: "Listening..."})
         recognition.start();
 
     }
@@ -284,13 +342,13 @@ class Test extends Component {
         this.setState({answerInput: ''});
 
         let displayAnswer = this.state.answer;
-        if (this.state.answerCategory == 'meaning') {
+        if (this.state.answerCategory === 'meaning') {
             displayAnswer = displayAnswer.join('/');
         }
         this.setState({result: `Answer was '${displayAnswer}'`});
         this.setState({idkDisabled: true});
         this.setState(prevState => {
-            let idkChar = prevState.testSet[prevState.perm.index].character;
+            let idkChar = prevState.testSet[prevState.perm.index][CHAR_SET];
             return {
                 idkList: prevState.idkList.concat(idkChar)
             }
@@ -320,7 +378,7 @@ class Test extends Component {
         let idkCounts = testLogic.Counter(this.state.idkList);
         let wordScores = [];
         this.state.testSet.forEach(word => {
-            let count = idkCounts[word['character']] || 0;
+            let count = idkCounts[word[CHAR_SET]] || 0;
             if (count > 4) {
                 count = 4;
             }
@@ -334,19 +392,18 @@ class Test extends Component {
             }
 
             wordScores.push({
-                char: word['character'],
+                char: word[CHAR_SET],
                 score: scoreDict[count]
             });            
 
             this.setState({testFinished: true});
 
             this.setState({scoreList: wordScores});
-
-            console.log(word['character'], scoreDict[count]);
         });
     }
 
     render () {
+
 
         let progressNum = Math.floor(this.state.permList.length / this.state.initNumPerms * 100);
         progressNum = progressNum ? progressNum : 0;
@@ -369,19 +426,38 @@ class Test extends Component {
 
         if (this.state.answerCategory === 'pinyin') {
             answerFormat = (
-                <button onClick={this.onListenPinyin}>Speak</button>
+                <div>
+                    <PictureButton 
+                        colour="yellow"
+                        src={micPic}
+                        clicked={this.onListenPinyin}/>
+                    {this.state.showInput ? (
+                        <Input 
+                        keyPressed={this.onKeyPress} 
+                        value={this.state.answerInput}
+                        changed={this.onInputChanged}
+                        placeholder="Type pinyin..."/>
+                    ) : null}
+                </div>
             );
         } else if (this.state.answerCategory === 'character') {
             answerFormat = characterTest;
         } else {
             answerFormat = inputElem;
         }
-
-        let onQuestionCard = <h2>{this.state.question}</h2>;
+        let displayQ = this.state.question;
+        if (this.state.questionCategory === 'meaning') {
+            displayQ = displayQ.join('/')
+        }
+        let onQuestionCard = <h2>{displayQ}</h2>;
 
         if (this.state.questionCategory === 'pinyin') {
             onQuestionCard = (
-                <button onClick={() => this.onSpeakPinyin(this.state.chosenCharacter)}>Play Pinyin</button>
+                <PictureButton
+                    colour="grey" 
+                    src={speakerPic}
+                    clicked={() => this.onSpeakPinyin(this.state.chosenCharacter)}
+                    />
             );
         }
 
@@ -415,11 +491,7 @@ class Test extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        words: state.words
-    }
-}
 
-export default connect(mapStateToProps)(Test);
+
+export default Test;
 

@@ -46,7 +46,7 @@ export const assignQA = function (testSet, permList, charSet) {
         Ax = ranWord['pinyin'];
         ACs = 'pinyin';
     } else if (perm.aCategory === 'M') {
-        Ax = ranWord['meaning'];
+        Ax = ranWord['meaning'].split('/');
         ACs = 'meaning';
     }
 
@@ -57,7 +57,7 @@ export const assignQA = function (testSet, permList, charSet) {
         Qx = ranWord['pinyin'];
         QCs = 'pinyin';
     } else if (perm.qCategory === 'M') {
-        Qx = ranWord['meaning'];
+        Qx = ranWord['meaning'].split('/');
         QCs = 'meaning';
     }
 
@@ -72,7 +72,7 @@ export const assignQA = function (testSet, permList, charSet) {
 }
 
 export const toneChecker = function (inp, answer) {
-    if (inp.replace(/[0-9]/g, '') == answer.replace(/[0-9]/g, '')) {
+    if (inp.replace(/[0-9]/g, '') === answer.replace(/[0-9]/g, '')) {
         return 'Incorrect tones'
     } else {
         return 'Try again';

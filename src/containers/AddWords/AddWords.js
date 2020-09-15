@@ -7,65 +7,9 @@ import MainBanner from '../../components/AddWords/MainBanner';
 import Table from '../../components/UI/Table/Table';
 import TableRow from '../../components/UI/Table/TableRow/TableRow';
 import Buttons from '../../components/UI/Buttons/Buttons';
-import * as actionTypes from '../../store/words/actions';
+import * as wordActions from '../../store/actions/index';
 
-let dummyWords = [
-    {
-        character: '雨伞',
-        pinyin: 'yu3 san3',
-        meaning: 'umbrella'
-    },
-    {
-        character: '特别',
-        pinyin: 'te4 bie2',
-        meaning: 'special'
-    },
-    {
-        character: '非常',
-        pinyin: 'fei1 chang2',
-        meaning: 'very'
-    },
-    {
-        character: '你好',
-        pinyin: 'ni3 hao3',
-        meaning: 'hello'
-    },
-    {
-        character: '再见',
-        pinyin: 'zai4 jian4',
-        meaning: 'goodbye'
-    }
-
-];
-
-let testDict = {
-    '你好': {
-        character: '你好',
-        pinyin: 'ni3 hao3',
-        meaning: 'hello'
-    },
-    '再见': {
-        character: '再见',
-        pinyin: 'zai4 jian4',
-        meaning: 'goodbye'
-    },
-    '非常': {
-        character: '非常',
-        pinyin: 'fei1 chang2',
-        meaning: 'very'
-    },
-    '特别': {
-        character: '特别',
-        pinyin: 'te4 bie2',
-        meaning: 'special'
-    },
-    '雨伞': {
-        character: '雨伞',
-        pinyin: 'yu3 san3',
-        meaning: 'umbrella'
-    }
-}
-
+let CHAR_SET = 'simp';
 
 class AddWords extends Component {
 
@@ -77,7 +21,8 @@ class AddWords extends Component {
 
     onSubmitWord = (event) => {
         event.preventDefault();
-        let wordResult = testDict[this.state.newWord];
+        let wordResult = 'punk';
+        this.searchForWord(this.state.newWord);
 
         let alreadyAdded = false;
 
@@ -125,16 +70,48 @@ class AddWords extends Component {
             newWord: ''
         });
     }
+
+    componentDidMount = () => {
+        this.props.onInitWords();
+    }
+
+    handleSearchResult = (res) => {
+        if (res.length === 1) {
+            let word = res[0];
+            this.props.onPostWord(word);
+        }
+    }
+
+    searchForWord = (e) => {
+        e.preventDefault();
+        this.setState({newWord: ''});
+        fetch(`/get-word/${this.state.newWord}/${CHAR_SET}`).then(response => {
+            response.json().then(data => {
+                this.handleSearchResult(data.words);
+            })
+        })        
+    }
     
 
     render() {
-        let tableRows = this.props.words.map((row, index) => (
-            <TableRow 
-                removed={() => this.props.onRemoveWord(index)} 
-                key={index} removable>
-                    {[row.character, row.pinyin, row.meaning]}
-            </TableRow>
-        ));
+
+        let table = null;
+        
+        if (this.props.words && this.props.words.length > 0) {
+            let tableRows = this.props.words.map((row, index) => (
+                <TableRow 
+                    removed={() => this.props.onDeleteWord(row.id)} 
+                    key={index} removable>
+                        {[row.simp, row.pinyin, row.meaning]}
+                </TableRow>
+            ));
+
+            table = (
+                <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Remove']}>
+                    {tableRows}
+                </Table>
+            )
+        }
 
         return (
             <Aux>
@@ -146,10 +123,8 @@ class AddWords extends Component {
                 <MainBanner 
                     inputChanged={this.onInputChangedHandler}
                     newWord={this.state.newWord}
-                    submitClicked={this.onSubmitWord}/>
-                <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Remove']}>
-                    {tableRows}
-                </Table>
+                    submitClicked={this.searchForWord}/>
+                {table}
                 <Buttons clickedHandlers={[null, this.onClearHandler]}>{['Test', 'Clear']}</Buttons>
             </Aux>
         );
@@ -158,15 +133,16 @@ class AddWords extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        words: state.words
+        words: state.words,
+        error: state.error
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onAddWord: word => dispatch({type: actionTypes.ADD_WORD, word: word}),
-        onRemoveWord: index => dispatch({type: actionTypes.REMOVE_WORD, index: index}),
-        onClearWords: () => dispatch({type: actionTypes.CLEAR_WORDS})
+        onPostWord: word => dispatch(wordActions.postWord(word)),
+        onDeleteWord: word_id => dispatch(wordActions.deleteWord(word_id)),
+        onInitWords: () => dispatch(wordActions.initWords())
     }
 }
 
