@@ -34,6 +34,7 @@
     margin: 0 auto;
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.75em;
 }
 
 .Table th {
@@ -47,7 +48,7 @@
 }
 
 .Table td {
-    padding: 10px;
+    padding: 10px 2px;
     color: #E6E0AE;
 }
 
@@ -63,4 +64,8 @@
     .TableBox {
         height: 400px;
     }
+}
+
+.Table :global(.Hoverable):hover {
+    background-color: rgba(177, 177, 177, 0.15);
 }

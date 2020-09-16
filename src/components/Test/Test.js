@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import UIfx from 'uifx';
-import {Howl, Howler} from 'howler';
+import { Howl } from 'howler';
 
 import classes from './Test.module.css';
 
@@ -20,7 +19,7 @@ import speakerPic from '../../assets/images/speaker.png';
 import successSound from '../../assets/sounds/success1.wav';
 import failSound from '../../assets/sounds/failure1.wav';
 
-let NUM_WORDS = 3;
+let NUM_WORDS = 1;
 let CHAR_SET = 'simp';
 
 let pinyinConverter = require("pinyin");
@@ -32,7 +31,7 @@ const beep = new Howl({
 
 const fail = new Howl({
     src: [failSound],
-    volume: 0.5
+    volume: 0.7
 });
 
 class Test extends Component {
@@ -262,7 +261,8 @@ class Test extends Component {
                         chosenCharacter: newQuestion.chosenCharacter,
                         result: '',
                         answerInput: '',
-                        showInput: false
+                        showInput: false,
+                        numSpeakTries: 0
                     });
                 }
                 .bind(this),
@@ -377,6 +377,7 @@ class Test extends Component {
     onFinishTest = () => {
         let idkCounts = testLogic.Counter(this.state.idkList);
         let wordScores = [];
+        let sendScores = [];
         this.state.testSet.forEach(word => {
             let count = idkCounts[word[CHAR_SET]] || 0;
             if (count > 4) {
@@ -394,12 +395,45 @@ class Test extends Component {
             wordScores.push({
                 char: word[CHAR_SET],
                 score: scoreDict[count]
-            });            
+            }); 
+
+            sendScores.push({
+                word_id: word.id,
+                score: 4-count
+            }); 
+            
+            this.onSendScores(sendScores);
 
             this.setState({testFinished: true});
 
             this.setState({scoreList: wordScores});
         });
+    }
+
+    onSendScores = (testResults) => {
+        fetch('/finish-test', {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify({
+                user_id: 1,
+                scores: testResults
+            }),
+            cache: "no-cache",
+            headers: new Headers({
+                "content-type": "application/json",
+            })
+        })
+        .then(
+            function(response) {
+                if (response.status !== 200) {
+                    console.log(`Problem. Status Code: ${response.status}`);
+                    return;
+                }
+            }
+        )
+        .catch(function(error) {
+            console.log("Fetch error: " + error);
+        })
     }
 
     render () {
