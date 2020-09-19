@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux' ;
 import { Howl } from 'howler';
 
 import classes from './Test.module.css';
@@ -421,11 +422,12 @@ class Test extends Component {
             cache: "no-cache",
             headers: new Headers({
                 "content-type": "application/json",
+                "x-access-token": this.props.token
             })
         })
         .then(
             function(response) {
-                if (response.status !== 200) {
+                if (!response.ok) {
                     console.log(`Problem. Status Code: ${response.status}`);
                     return;
                 }
@@ -437,8 +439,6 @@ class Test extends Component {
     }
 
     render () {
-
-
         let progressNum = Math.floor(this.state.permList.length / this.state.initNumPerms * 100);
         progressNum = progressNum ? progressNum : 0;
 
@@ -525,7 +525,11 @@ class Test extends Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth.token
+    }
+}
 
-
-export default Test;
+export default connect(mapStateToProps)(Test);
 

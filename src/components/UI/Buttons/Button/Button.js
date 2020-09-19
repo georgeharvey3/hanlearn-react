@@ -8,10 +8,16 @@ const button = (props) => {
     if (props.colour === 'red') {
         attachedClasses = [classes.Button, classes.Red];
     }
+
+    if (props.disabled) {
+        attachedClasses = [classes.Button, classes.Grey];
+    }
+            
     return (
         <button 
             className={attachedClasses.join(' ')}
-            onClick={props.clicked}>
+            onClick={props.clicked}
+            disabled={props.disabled}>
                 {props.children}
         </button>
     );

@@ -12,7 +12,7 @@ class TestWords extends Component {
     }
 
     componentDidMount () {
-        this.props.onInitWords();
+        this.props.onInitWords(this.props.token);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -41,13 +41,14 @@ class TestWords extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        words: state.words
+        words: state.addWords.words,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onInitWords: () => dispatch(wordActions.initWords())
+        onInitWords: (token) => dispatch(wordActions.initWords(token))
     }
 }
 

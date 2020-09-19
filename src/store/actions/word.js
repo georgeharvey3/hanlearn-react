@@ -27,9 +27,13 @@ export const fetchWordsFailed = () => {
     }
 }
 
-export const initWords = () => {
+export const initWords = (token) => {
     return dispatch => {
-        fetch('/get-user-words/1').then(response =>
+        fetch('/get-user-words', {
+            headers: {
+                'x-access-token': token
+            }
+        }).then(response =>
             response.json().then(data => {
                 dispatch(setWords(data.words));
             })
@@ -39,13 +43,15 @@ export const initWords = () => {
     }
 }
 
-export const postWord = (word) => {
+
+export const postWord = (token, word) => {
     return dispatch => {
         fetch('/add-word', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'x-access-token': token
             },
             body: JSON.stringify(word)
         }).then(response => response.json().then(data => {
@@ -54,13 +60,14 @@ export const postWord = (word) => {
     }
 }
 
-export const deleteWord = (wordID) => {
+export const deleteWord = (token, wordID) => {
     return dispatch => {
         fetch('/remove-word', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'x-access-token': token
             },
             body: JSON.stringify(wordID)
         }).then(response => response.json().then(data => {

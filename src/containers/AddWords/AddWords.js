@@ -8,7 +8,6 @@ import Table from '../../components/UI/Table/Table';
 import Buttons from '../../components/UI/Buttons/Buttons';
 import * as wordActions from '../../store/actions/index';
 import Remove from '../../components/UI/Table/TableRow/Remove/Remove';
-import { findRenderedComponentWithType } from 'react-dom/test-utils';
 
 
 let CHAR_SET = 'simp';
@@ -43,7 +42,7 @@ class AddWords extends Component {
     }
 
     componentDidMount = () => {
-        this.props.onInitWords();
+        this.props.onInitWords(this.props.token);
     }
 
     handleSearchResult = (res, searchedWord) => {
@@ -65,7 +64,7 @@ class AddWords extends Component {
                     return;
                 }
             }
-            this.props.onPostWord(word);
+            this.props.onPostWord(this.props.token, word);
             this.setState({newWord: ''});  
         }
 
@@ -116,7 +115,8 @@ class AddWords extends Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'x-access-token': this.props.token
             },
             body: JSON.stringify({word_id: wordID, new_meaning:  newMeaning})
         }).then(response => {
@@ -147,7 +147,7 @@ class AddWords extends Component {
                             {row.meaning}
                     </td>
                     <td>{row.due_date}</td>
-                    <td><Remove clicked={() => this.props.onDeleteWord(row.id)}/></td>
+                    <td><Remove clicked={() => this.props.onDeleteWord(this.props.token, row.id)}/></td>
                 </tr>
             ));
 
@@ -213,16 +213,17 @@ class AddWords extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        words: state.words,
-        error: state.error
+        words: state.addWords.words,
+        error: state.addWords.error,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onPostWord: word => dispatch(wordActions.postWord(word)),
-        onDeleteWord: word_id => dispatch(wordActions.deleteWord(word_id)),
-        onInitWords: () => dispatch(wordActions.initWords())
+        onPostWord: (token, word) => dispatch(wordActions.postWord(token, word)),
+        onDeleteWord: (token, word_id) => dispatch(wordActions.deleteWord(token, word_id)),
+        onInitWords: (token) => dispatch(wordActions.initWords(token))
     }
 }
 

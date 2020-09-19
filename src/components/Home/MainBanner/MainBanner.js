@@ -19,10 +19,6 @@ const mainBanner = () => (
                 </div>
             </section>
         </div>
-        <div className={classes.Buttons}>
-            <Button>Sign In</Button>
-            <Button>Guest</Button>
-        </div>
     </Aux>
 );
 

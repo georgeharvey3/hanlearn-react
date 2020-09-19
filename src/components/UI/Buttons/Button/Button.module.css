@@ -16,6 +16,12 @@
     color: #E6E0AE
 }
 
+.Grey {
+    background-color: lightgray;
+    color: darkgray;
+    cursor: default;
+}
+
 .Yellow {
     background-color: #E6E0AE;
     box-shadow: 0px 3px 0px #918c63;

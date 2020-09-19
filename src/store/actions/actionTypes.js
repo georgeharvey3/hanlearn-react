@@ -6,3 +6,10 @@ export const FETCH_WORDS = 'FETCH_WORDS';
 export const FETCH_WORDS_FAILED = 'FETCH_WORDS_FAILED';
 export const POST_WORD = 'POST_WORD';
 export const DELETE_WORD = 'DELETE_WORD';
+
+export const AUTH_START = 'AUTH_START';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
+export const AUTH_FAIL = 'AUTH_FAIL';
+export const AUTH_LOGOUT = 'AUTH_LOGOUT';
+
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
