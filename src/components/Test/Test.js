@@ -20,9 +20,6 @@ import speakerPic from '../../assets/images/speaker.png';
 import successSound from '../../assets/sounds/success1.wav';
 import failSound from '../../assets/sounds/failure1.wav';
 
-let NUM_WORDS = 1;
-let CHAR_SET = 'simp';
-
 let pinyinConverter = require("pinyin");
 
 const beep = new Howl({
@@ -36,36 +33,59 @@ const fail = new Howl({
 });
 
 class Test extends Component {
-    state = {
-        testSet: [],
-        permList: [],
-        perm: null,
-        answer: null,
-        answerCategory: null,
-        question: null,
-        questionCategory: null,
-        chosenCharacter: null,
-        result: '',
-        answerInput: '',
-        idkDisabled: false,
-        progressBar: 0,
-        initNumPerms: 0,
-        idkList: [],
-        scoreList: [],
-        testFinished: false,
-        showInput: false,
-        drawnCharacters: [],
-        numSpeakTries: 0
+    constructor () {
+        super();
+        let numWords = localStorage.getItem('numWords') || 5;
+        let charSet = localStorage.getItem('charSet') || 'simp';
+
+        this.state = {
+            testSet: [],
+            permList: [],
+            numWords: numWords,
+            charSet: charSet,
+            perm: null,
+            answer: null,
+            answerCategory: null,
+            question: null,
+            questionCategory: null,
+            chosenCharacter: null,
+            result: '',
+            answerInput: '',
+            idkDisabled: false,
+            progressBar: 0,
+            initNumPerms: 0,
+            idkList: [],
+            scoreList: [],
+            testFinished: false,
+            showInput: false,
+            drawnCharacters: [],
+            numSpeakTries: 0,
+            useSound: true,
+            useHandwriting: true,
+            useSpeechRecognition: true
+        }
+    
+
     }
 
     componentDidMount () {
-        this.onInitialiseTestSet();
+        let useSound = localStorage.getItem('useSound') === 'false' ? false : true;
+        let useHandwriting = localStorage.getItem('useHandwriting') === 'false' ? false : true;
+        let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' ? false : true;
+
+        this.setState({
+            useSound: useSound,
+            useHandwriting: useHandwriting,
+            useSpeechRecognition: useSpeechRecognition
+        })
+
+        this.onInitialiseTestSet(useHandwriting);
     }
 
     componentDidUpdate = (prevProps, prevState) => {
 
         if (prevState.perm !== this.state.perm) {
-            if (this.state.questionCategory === 'pinyin') {
+            if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
                 this.onSpeakPinyin(this.state.chosenCharacter);
             }
             if (this.state.answerCategory === 'character') {
@@ -85,14 +105,15 @@ class Test extends Component {
         }
     }
 
-    onInitialiseTestSet = () => {
+    onInitialiseTestSet = (useHandwriting) => {
         let allWords = this.props.words.slice();
         if (allWords.length === 0) {
             return;
         }
-        let selectedWords = testLogic.chooseTestSet(allWords, NUM_WORDS)
-        let permList = testLogic.setPermList(selectedWords);
-        let initialVals = testLogic.assignQA(selectedWords, permList, CHAR_SET);
+        let selectedWords = testLogic.chooseTestSet(allWords, this.state.numWords);
+        
+        let permList = testLogic.setPermList(selectedWords, useHandwriting);
+        let initialVals = testLogic.assignQA(selectedWords, permList, this.state.charSet);
         this.setState({
             testSet: selectedWords,
             permList: permList,
@@ -240,7 +261,9 @@ class Test extends Component {
 
     onCorrectAnswer = () => {
         this.setState({result: 'Correct!'});
-        beep.play();
+        if (this.state.useSound) {
+            beep.play();
+        }
         let permIndex = this.state.permList.indexOf(this.state.perm);
         let newPermList = this.state.permList.slice()
 
@@ -250,7 +273,7 @@ class Test extends Component {
         }
         //this.move();
         if (newPermList.length !== 0) {
-            let newQuestion = testLogic.assignQA(this.state.testSet, newPermList, CHAR_SET);
+            let newQuestion = testLogic.assignQA(this.state.testSet, newPermList, this.state.charSet);
             setTimeout(
                 function() {
                     this.setState({
@@ -286,7 +309,9 @@ class Test extends Component {
             let resultString = testLogic.toneChecker(this.state.answerInput.toLowerCase(), this.state.answer);
             this.setState({result: resultString});
         } else {
-            fail.play();
+            if (this.state.useSound) {
+                fail.play();
+            }
             this.setState({result: 'Try Again'});
         }
     }
@@ -349,13 +374,13 @@ class Test extends Component {
         this.setState({result: `Answer was '${displayAnswer}'`});
         this.setState({idkDisabled: true});
         this.setState(prevState => {
-            let idkChar = prevState.testSet[prevState.perm.index][CHAR_SET];
+            let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
             return {
                 idkList: prevState.idkList.concat(idkChar)
             }
         });
 
-        let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, CHAR_SET);
+        let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
         setTimeout(
             function() {
                 this.setState({
@@ -380,7 +405,7 @@ class Test extends Component {
         let wordScores = [];
         let sendScores = [];
         this.state.testSet.forEach(word => {
-            let count = idkCounts[word[CHAR_SET]] || 0;
+            let count = idkCounts[word[this.state.charSet]] || 0;
             if (count > 4) {
                 count = 4;
             }
@@ -394,7 +419,7 @@ class Test extends Component {
             }
 
             wordScores.push({
-                char: word[CHAR_SET],
+                char: word[this.state.charSet],
                 score: scoreDict[count]
             }); 
 
@@ -456,9 +481,12 @@ class Test extends Component {
                 borderRadius: '3px'
             }}></div>
 
+        let useSound = localStorage.getItem('useSound') === 'false' ? false : true;
+        let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' ? false : true;
+
         let answerFormat = this.state.answerCategory === 'character' ? characterTest : inputElem;
 
-        if (this.state.answerCategory === 'pinyin') {
+        if (this.state.answerCategory === 'pinyin' && this.state.useSpeechRecognition) {
             answerFormat = (
                 <div>
                     <PictureButton 
@@ -485,7 +513,7 @@ class Test extends Component {
         }
         let onQuestionCard = <h2>{displayQ}</h2>;
 
-        if (this.state.questionCategory === 'pinyin') {
+        if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
             onQuestionCard = (
                 <PictureButton
                     colour="grey" 

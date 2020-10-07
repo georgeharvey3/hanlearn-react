@@ -147,7 +147,7 @@ class Auth extends Component {
                 {formElements}
                 <br/>
                 <Button 
-                    disabled={!this.state.formIsValid}>SUBMIT</Button>
+                    disabled={!this.state.formIsValid}>Register</Button>
             </form>
         )
 

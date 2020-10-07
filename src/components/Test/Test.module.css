@@ -31,3 +31,7 @@
     margin: 0 auto;
     padding: 20px 5px;
 }
+
+.QuestionCar h2 {
+    overflow-wrap: normal;
+}

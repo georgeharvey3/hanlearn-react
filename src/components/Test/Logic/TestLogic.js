@@ -1,18 +1,27 @@
 export const chooseTestSet = (allWords, numWords) => {
-        let selectedWords = []
-        for (let i = 0; i < numWords; i ++) {
-            let index = Math.floor(Math.random() * allWords.length);
-            let selectedWord = allWords[index];
-            selectedWords.push(selectedWord);
-            allWords.splice(index, 1);
-        }
-        return selectedWords;
+    let dueWords = allWords.filter(word => new Date(word.due_date) <= new Date());
+    //let dueWords = allWords;
+    let selectedWords = []
+    for (let i = 0; i < numWords; i ++) {
+        let index = Math.floor(Math.random() * dueWords.length);
+        let selectedWord = dueWords[index];
+        selectedWords.push(selectedWord);
+        dueWords.splice(index, 1);
+    }
+    return selectedWords;
 }
 
-export const setPermList = function (testSet) {
+export const setPermList = function (testSet, includeHandwriting) {
     let nums = Array.from(Array(testSet.length).keys());
-    //let qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC'];
-    let qaCombinations = ['MC']
+
+    let qaCombinations;
+
+    if (includeHandwriting) {
+        qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC']
+    } else {
+        qaCombinations = ['PC', 'PM', 'MP', 'MC'];
+    }
+    //let qaCombinations = ['MC']
 
     let permList = [];
 
@@ -23,6 +32,7 @@ export const setPermList = function (testSet) {
                            "qCategory": qaCombinations[j][1]})
         }
     }
+
 
     return permList
 }
@@ -38,6 +48,7 @@ const ranChoice = function (a) {
 export const assignQA = function (testSet, permList, charSet) {
     let perm = ranChoice(permList);
     let ranWord = testSet[perm.index];
+
     let Ax, ACs, Qx, QCs
 
     if (perm.aCategory === 'C') {

@@ -10,6 +10,7 @@ import TestWords from './containers/TestWords/TestWords';
 import Auth from './containers/Auth/Auth';
 import Register from './containers/Auth/Register';
 import Logout from './containers/Auth/Logout/Logout';
+import SettingsPage from './containers/SettingsPage/SettingsPage';
 import * as actions from './store/actions/index';
 
 class App extends Component {
@@ -29,6 +30,7 @@ class App extends Component {
             <Route path="/auth" component={Auth} />
             <Route path="/register" component={Register} />
             <Route path="/logout" component={Logout} />
+            <Route path="/settings" component={SettingsPage} />
           </Switch>
         </Layout>
       </div>

@@ -3,9 +3,16 @@ import React from 'react';
 import classes from './Table.module.css';
 
 const table = props => {
-    let headings = props.headings.map(heading => (
-        <th key={heading}>{heading}</th>
-    ));
+    let headings = props.headings.map(heading => {
+        if (heading === 'Due Date') {
+            return (
+                <th className="Disappear" key={heading}>{heading}</th>
+            );
+        }
+        return (
+            <th key={heading}>{heading}</th>
+        );
+    });
     return (
         <div className={classes.TableBox}>
             <table className={classes.Table}>

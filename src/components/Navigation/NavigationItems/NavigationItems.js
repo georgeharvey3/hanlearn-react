@@ -17,17 +17,30 @@ const navigationItems = (props) => {
         </ul>
     );
 
-    if (props.authenticated) {
+    if (props.authenticated && !props.isSideDrawer) {
         navigationItems = (
             <ul className={classes.NavigationItems}>
                 <NavigationItem link="/">Home</NavigationItem>
-                <Dropdown />
                 <NavigationItem link="/add-words">Add</NavigationItem>
                 <NavigationItem link="/test-words">Test</NavigationItem>
+                <Dropdown />
                 <NavigationItem link="/logout">Logout</NavigationItem>
             </ul>
         )
     }
+
+    if (props.authenticated && props.isSideDrawer) {
+        navigationItems = (
+            <ul className={classes.NavigationItems}>
+                <NavigationItem link="/">Home</NavigationItem>
+                <NavigationItem link="/add-words">Add</NavigationItem>
+                <NavigationItem link="/test-words">Test</NavigationItem>
+                <NavigationItem link="/settings">Settings</NavigationItem>
+                <NavigationItem link="/logout">Logout</NavigationItem>
+            </ul>
+        )
+    }
+
     return (
         <Aux>
             {navigationItems}

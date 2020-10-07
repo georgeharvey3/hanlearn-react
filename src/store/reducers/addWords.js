@@ -10,7 +10,7 @@ const reducer = (state=initialState, action) => {
         case actionTypes.ADD_WORD:
             return {
                 ...state,
-                words: state.words.concat(action.word)
+                words: [action.word].concat(state.words)
             }
         case actionTypes.REMOVE_WORD:
             let newWords = state.words.slice();

@@ -19,10 +19,7 @@ class Auth extends Component {
                     placeholder: 'Mail Address'
                 },
                 value: '',
-                validation: {
-                    required: true,
-                    isEmail: true
-                },
+                validation: null,
                 valid: false,
                 touched: false
             },
@@ -33,10 +30,7 @@ class Auth extends Component {
                     placeholder: 'Password'
                 },
                 value: '',
-                validation: {
-                    required: true,
-                    minLength: 6
-                },
+                validation: null,
                 valid: false,
                 touched: false
             }
@@ -122,7 +116,7 @@ class Auth extends Component {
             <form onSubmit={this.submitHandler}>
                 {formElements}
                 <br/>
-                <Button>SUBMIT</Button>
+                <Button>Log In</Button>
             </form>
         )
 

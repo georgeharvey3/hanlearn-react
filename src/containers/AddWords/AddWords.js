@@ -127,6 +127,10 @@ class AddWords extends Component {
         }
         );
     }
+
+    onTestHandler = () => {
+        this.props.history.push('/test-words');
+    }
     
 
     render() {
@@ -134,25 +138,31 @@ class AddWords extends Component {
         let table = null;
         
         if (this.props.words && this.props.words.length > 0) {
-            let tableRows = this.props.words.map((row, index) => (
-                <tr key={index}>
-                    <td>{row.simp}</td>
-                    <td>{row.pinyin}</td>
-                    <td 
-                        contentEditable='true' 
-                        suppressContentEditableWarning='true'
-                        onKeyPress={(e) => this.onMeaningKeyPress(e, row.id)}
-                        onBlur={this.onBlurMeaning}
-                        data-orig={row.meaning}>
-                            {row.meaning}
-                    </td>
-                    <td>{row.due_date}</td>
-                    <td><Remove clicked={() => this.props.onDeleteWord(this.props.token, row.id)}/></td>
-                </tr>
-            ));
+            let tableRows = this.props.words.map((row, index) => {
+                let dueDateRow = window.screen.width > 500 ? <td>{row.due_date}</td> : null;
+                return (
+                    <tr key={index}>
+                        <td>{row.simp}</td>
+                        <td>{row.pinyin}</td>
+                        <td 
+                            contentEditable='true' 
+                            suppressContentEditableWarning='true'
+                            onKeyPress={(e) => this.onMeaningKeyPress(e, row.id)}
+                            onBlur={this.onBlurMeaning}
+                            data-orig={row.meaning}>
+                                {row.meaning}
+                        </td>
+                        <td className="Disappear">{row.due_date}</td>
+                        <td><Remove clicked={() => this.props.onDeleteWord(this.props.token, row.id)}/></td>
+                    </tr>
+                );
+            });
+
+            let tableHeadings = window.screen.width > 500 ? ['Character(s)', 'Pinyin', 'Meaning', 'Due Date', 'Remove'] : 
+                ['Character(s)', 'Pinyin', 'Meaning','Remove'];
 
             table = (
-                <Table headings={['Character(s)', 'Pinyin', 'Meaning', , 'Due Date', 'Remove']}>
+                <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Due Date', 'Remove']}>
                     {tableRows}
                 </Table>
             )
@@ -205,7 +215,7 @@ class AddWords extends Component {
                     newWord={this.state.newWord}
                     submitClicked={this.searchForWord}/>
                 {table}
-                <Buttons clickedHandlers={[null, this.onClearHandler]}>{['Test', 'Clear']}</Buttons>
+                <Buttons clickedHandlers={[this.onTestHandler, this.onClearHandler]}>{['Test', 'Clear']}</Buttons>
             </Aux>
         );
     }

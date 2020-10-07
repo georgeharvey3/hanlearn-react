@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { connect } from 'react-redux';
+
 import Aux from '../../hoc/Aux';
 import MainBanner from '../../components/Home/MainBanner/MainBanner';
 import ExpBanner from '../../components/Home/ExpBanner/ExpBanner';
@@ -10,7 +12,18 @@ import addCap from '../../assets/images/addwords_pic.png';
 import testCap from '../../assets/images/testwords_pic.png';
 
 class Home extends Component {
+
+    onClickSignUp = () => {
+        this.props.history.push("/register");
+    }
+
     render () {
+        let signUpBanner = <SignUpBanner signUpClicked={this.onClickSignUp}/>;
+
+        if (this.props.isAuthenticated) {
+            signUpBanner = null;
+        }
+
         return (
             <Aux>
                 <MainBanner />
@@ -20,12 +33,17 @@ class Home extends Component {
                 <ExpBanner priority='right' img={testCap} heading={'Start learning!'}>
                     During the test, you will be asked to complete various pairwise combinations between the character(s), pinyin and meaning of each word. When you feel comfortable with a word you can eliminate it from your bank.
                 </ExpBanner>
-                <SignUpBanner />
                 <Footer />
             </Aux>
         );
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+        isAuthenticated: state.auth.token !== null
+    }
+}
+
+export default connect(mapStateToProps)(Home);
 

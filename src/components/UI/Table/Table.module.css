@@ -48,7 +48,7 @@
 }
 
 .Table td {
-    padding: 10px 2px;
+    padding: 5px 1px;
     color: #E6E0AE;
 }
 
@@ -57,7 +57,22 @@
 }
 
 @media (min-width: 500px) {
-    
+    .Table {
+        font-size: 0.85em;
+        padding: 10px 2px;
+    }
+}
+
+@media (max-width: 500px) {
+    .Table :global(.Disappear) {
+        display: none;
+    }
+}
+
+@media (min-width: 700px) {
+    .Table {
+        font-size: 1em;
+    }
 }
 
 @media (min-height: 750px) {
@@ -69,3 +84,6 @@
 .Table :global(.Hoverable):hover {
     background-color: rgba(177, 177, 177, 0.15);
 }
+
+
+
