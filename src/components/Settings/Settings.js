@@ -25,29 +25,23 @@ class Settings extends Component {
         this.setState({
             charSet: e.target.value
         });
+        localStorage.setItem("charSet", e.target.value);
     }
 
     onSliderChange = (e) => {
         this.setState({
             numWords: e.target.value
         });
+        localStorage.setItem("numWords", e.target.value);
     }
 
     onCheckChange = (e) => {
         this.setState({
             [e.target.value]: !this.state[e.target.value]
-        })
+        });
+        localStorage.setItem(e.target.value, e.target.checked);
+
     }
-
-    componentWillUnmount = () => {
-        localStorage.setItem("charSet", this.state.charSet);
-        localStorage.setItem("numWords", this.state.numWords);
-        localStorage.setItem("useSpeechRecognition", this.state.useSpeechRecognition);
-        localStorage.setItem("useHandwriting", this.state.useHandwriting);
-        localStorage.setItem("useSound", this.state.useSound);
-    }
-
-
 
     render () {
         return (
