@@ -8,6 +8,14 @@ const initialState = {
 const reducer = (state=initialState, action) => {
     switch (action.type) {
         case actionTypes.ADD_WORD:
+            let word = action.word;
+            let today = new Date();
+            let todayDay = today.getDate() >= 10 ? today.getDate().toString() : "0" + today.getDate().toString();
+            let todayMonth = today.getMonth() >= 9 ? (today.getMonth() + 1).toString() : "0" + (today.getMonth() + 1).toString();
+            let todayYear = today.getFullYear().toString();
+            let todayString = todayYear + "/" + todayMonth + "/" + todayDay;
+            word.due_date = todayString;
+
             return {
                 ...state,
                 words: [action.word].concat(state.words)

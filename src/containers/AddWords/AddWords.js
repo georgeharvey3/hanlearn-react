@@ -10,17 +10,22 @@ import * as wordActions from '../../store/actions/index';
 import Remove from '../../components/UI/Table/TableRow/Remove/Remove';
 
 
-let CHAR_SET = 'simp';
-
 class AddWords extends Component {
 
-    state = {
-        newWord: '',
-        errorMessage: '',
-        showErrorMessage: false,
-        clashChar: '',
-        clashWords: [],
-        showClashTable: false
+    constructor () {
+        super();
+
+        let charSet = localStorage.getItem('charSet') || 'simp';
+
+        this.state = {
+            newWord: '',
+            errorMessage: '',
+            showErrorMessage: false,
+            clashChar: '',
+            clashWords: [],
+            showClashTable: false,
+            charSet: charSet
+        }
     }
 
     onInputChangedHandler = (event) => {
@@ -70,7 +75,7 @@ class AddWords extends Component {
 
         if (res.length > 1) {
             this.setState({
-                clashChar: res[0][CHAR_SET],
+                clashChar: res[0][this.state.charSet],
                 clashWords: res,
                 showClashTable: true
             })
@@ -79,7 +84,7 @@ class AddWords extends Component {
 
     searchForWord = (e) => {
         e.preventDefault();
-        fetch(`/get-word/${this.state.newWord}/${CHAR_SET}`).then(response => {
+        fetch(`/get-word/${this.state.newWord}/${this.state.charSet}`).then(response => {
             response.json().then(data => {
                 this.handleSearchResult(data.words, this.state.newWord);
             })
@@ -129,7 +134,16 @@ class AddWords extends Component {
     }
 
     onTestHandler = () => {
-        this.props.history.push('/test-words');
+        let anyDue = this.props.words.some(word => new Date(word.due_date) <= new Date());
+
+        if (anyDue) {
+            this.props.history.push('/test-words');
+        } else {
+            this.setState({
+                showErrorMessage: true,
+                errorMessage: "You are up to date!" 
+            })
+        }
     }
     
 
@@ -179,7 +193,7 @@ class AddWords extends Component {
                             className="Hoverable"
                             style={{cursor: 'pointer'}}
                             onClick={() => {
-                            this.handleSearchResult([word], word['CHAR_SET']);
+                            this.handleSearchResult([word], word[this.state.charSet]);
                             this.setState({
                                 clashChar: '',
                                 clashWords: [],

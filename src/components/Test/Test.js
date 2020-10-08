@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from'react-router-dom';
 import { connect } from 'react-redux' ;
 import { Howl } from 'howler';
 
@@ -13,6 +14,7 @@ import Input from '../UI/Input/Input';
 import Buttons from '../UI/Buttons/Buttons';
 import TestSummary from './TestSummary/TestSummary';
 import PictureButton from '../UI/Buttons/PictureButton/PictureButton';
+import Button from '../UI/Buttons/Button/Button';
 
 import micPic from '../../assets/images/microphone.png';
 import speakerPic from '../../assets/images/speaker.png';
@@ -62,7 +64,8 @@ class Test extends Component {
             numSpeakTries: 0,
             useSound: true,
             useHandwriting: true,
-            useSpeechRecognition: true
+            useSpeechRecognition: true,
+            showErrorMessage: false,
         }
     
 
@@ -111,6 +114,12 @@ class Test extends Component {
             return;
         }
         let selectedWords = testLogic.chooseTestSet(allWords, this.state.numWords);
+        if (selectedWords.length === 0 || !selectedWords[0]) {
+            this.setState({
+                showErrorMessage: true
+            })
+            return;
+        }
         
         let permList = testLogic.setPermList(selectedWords, useHandwriting);
         let initialVals = testLogic.assignQA(selectedWords, permList, this.state.charSet);
@@ -429,10 +438,10 @@ class Test extends Component {
             }); 
             
             this.onSendScores(sendScores);
-
-            this.setState({testFinished: true});
-
-            this.setState({scoreList: wordScores});
+            this.setState({
+                testFinished: true,
+                scoreList: wordScores
+            });
         });
     }
 
@@ -463,6 +472,10 @@ class Test extends Component {
         })
     }
 
+    onClickAddWords = () => {
+        this.props.history.push("/add-words");
+    }
+
     render () {
         let progressNum = Math.floor(this.state.permList.length / this.state.initNumPerms * 100);
         progressNum = progressNum ? progressNum : 0;
@@ -480,9 +493,6 @@ class Test extends Component {
                 margin: '0 auto',
                 borderRadius: '3px'
             }}></div>
-
-        let useSound = localStorage.getItem('useSound') === 'false' ? false : true;
-        let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' ? false : true;
 
         let answerFormat = this.state.answerCategory === 'character' ? characterTest : inputElem;
 
@@ -523,33 +533,47 @@ class Test extends Component {
             );
         }
 
-        return (
-            <Aux>
-                <Backdrop show={this.state.testFinished} />
+        if (this.state.testSet.length !== 0) {
+            return (
+                <Aux>
+                    <Backdrop show={this.state.testFinished} />
+                    <Modal 
+                        show={this.state.testFinished}
+                        style={{
+                            backgroundColor: 'rgb(82, 129, 122)',
+                            top: '20%'
+                        }}>
+                        <TestSummary scores={this.state.scoreList}/>
+                    </Modal>
+                    <div className={classes.Test}>
+                        <ProgressBar progress={progressNum}/>
+                        <h3>Enter the <span>{this.state.answerCategory}</span> for...</h3>
+                        <div className={classes.QuestionCard}>
+                            {onQuestionCard}
+                        </div>
+                        <p className={classes.Result}>{this.state.result}</p>
+                        <div style={{
+                            height: '200px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end'
+                        }}>
+                            {answerFormat}
+                        </div>
+                        <Buttons clickedHandlers={[this.onIDontKnow, this.onSubmitAnswer]}>{["I Don't Know", "Submit"]}</Buttons>
+                    </div>
+                </Aux>
+            );
+        }
+        else {
+            return (
                 <Modal 
-                    show={this.state.testFinished}
-                    style={{backgroundColor: 'rgb(82, 129, 122)'}}>
-                    <TestSummary scores={this.state.scoreList}/>
-                </Modal>
-                <div className={classes.Test}>
-                    <ProgressBar progress={progressNum}/>
-                    <h3>Enter the <span>{this.state.answerCategory}</span> for...</h3>
-                    <div className={classes.QuestionCard}>
-                        {onQuestionCard}
-                    </div>
-                    <p className={classes.Result}>{this.state.result}</p>
-                    <div style={{
-                        height: '200px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end'
-                    }}>
-                        {answerFormat}
-                    </div>
-                    <Buttons clickedHandlers={[this.onIDontKnow, this.onSubmitAnswer]}>{["I Don't Know", "Submit"]}</Buttons>
-                </div>
-            </Aux>
-        );
+                    show={this.state.showErrorMessage}>
+                        <p>You are up to date!</p>
+                        <Button clicked={this.onClickAddWords}>Add Words</Button>
+                </Modal> 
+            )
+        }
     }
 }
 
@@ -559,5 +583,5 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(Test);
+export default withRouter(connect(mapStateToProps)(Test));
 

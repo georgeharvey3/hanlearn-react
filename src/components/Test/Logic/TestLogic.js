@@ -1,5 +1,6 @@
 export const chooseTestSet = (allWords, numWords) => {
-    let dueWords = allWords.filter(word => new Date(word.due_date) <= new Date());
+    let today = new Date();
+    let dueWords = allWords.filter(word => new Date(word.due_date) <= today);
     //let dueWords = allWords;
     let selectedWords = []
     for (let i = 0; i < numWords; i ++) {
@@ -21,7 +22,6 @@ export const setPermList = function (testSet, includeHandwriting) {
     } else {
         qaCombinations = ['PC', 'PM', 'MP', 'MC'];
     }
-    //let qaCombinations = ['MC']
 
     let permList = [];
 
