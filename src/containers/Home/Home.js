@@ -33,6 +33,7 @@ class Home extends Component {
                 <ExpBanner priority='right' img={testCap} heading={'Start learning!'}>
                     During the test, you will be asked to complete various pairwise combinations between the character(s), pinyin and meaning of each word. When you feel comfortable with a word you can eliminate it from your bank.
                 </ExpBanner>
+                {signUpBanner}
                 <Footer />
             </Aux>
         );
