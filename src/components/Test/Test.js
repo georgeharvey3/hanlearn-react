@@ -446,7 +446,7 @@ class Test extends Component {
     }
 
     onSendScores = (testResults) => {
-        fetch('/finish-test', {
+        fetch('/api/finish-test', {
             method: "POST",
             credentials: "include",
             body: JSON.stringify({

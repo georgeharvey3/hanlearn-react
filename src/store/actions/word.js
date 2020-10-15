@@ -29,7 +29,7 @@ export const fetchWordsFailed = () => {
 
 export const initWords = (token) => {
     return dispatch => {
-        fetch('/get-user-words', {
+        fetch('/api/get-user-words', {
             headers: {
                 'x-access-token': token
             }
@@ -46,7 +46,7 @@ export const initWords = (token) => {
 
 export const postWord = (token, word) => {
     return dispatch => {
-        fetch('/add-word', {
+        fetch('/api/add-word', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const postWord = (token, word) => {
 
 export const deleteWord = (token, wordID) => {
     return dispatch => {
-        fetch('/remove-word', {
+        fetch('/api/remove-word', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ export const checkAuthTimeOut = (expirationTime) => {
 export const auth = (email, password) => {
     return dispatch => {
         dispatch(authStart());
-        fetch('login', {
+        fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export const auth = (email, password) => {
 export const register = (email, username, password) => {
     return dispatch => {
         dispatch(authStart());
-        fetch('create-user', {
+        fetch('/api/create-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

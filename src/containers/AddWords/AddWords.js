@@ -84,7 +84,7 @@ class AddWords extends Component {
 
     searchForWord = (e) => {
         e.preventDefault();
-        fetch(`/get-word/${this.state.newWord}/${this.state.charSet}`).then(response => {
+        fetch(`/api/get-word/${this.state.newWord}/${this.state.charSet}`).then(response => {
             response.json().then(data => {
                 this.handleSearchResult(data.words, this.state.newWord);
             })
@@ -116,7 +116,7 @@ class AddWords extends Component {
     }
 
     sendMeaningUpdate = (wordID, newMeaning) => {
-        fetch('/update-word-meaning', {
+        fetch('/api/update-word-meaning', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
