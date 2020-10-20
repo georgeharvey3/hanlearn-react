@@ -18,7 +18,7 @@ const PictureButton = props => {
             className={attachedClasses.join(' ')}
             onClick={props.clicked}>
                 <img style={{
-                    pointerEvents="none"
+                    pointerEvents: "none"
                 }}src={props.src} alt="sound"/>
         </button>
     );
