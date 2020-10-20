@@ -269,7 +269,7 @@ class Test extends Component {
     }
 
     onCorrectAnswer = () => {
-        this.setState({result: 'Correct!'});
+        this.setState({result: 'Morrect!'});
         if (this.state.useSound) {
             beep.play();
         }
@@ -502,7 +502,7 @@ class Test extends Component {
                     <PictureButton 
                         colour="yellow"
                         src={micPic}
-                        clicked={this.onListenPinyin}/>
+                        clicked={() => this.onListenPinyin()}/>
                     {this.state.showInput ? (
                         <Input 
                         keyPressed={this.onKeyPress} 
@@ -517,7 +517,7 @@ class Test extends Component {
         } else {
             answerFormat = inputElem;
         }
-        
+
         let displayQ = this.state.question;
         if (this.state.questionCategory === 'meaning') {
             displayQ = displayQ.join('/')
