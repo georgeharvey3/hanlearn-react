@@ -353,7 +353,6 @@ class Test extends Component {
     }
 
     onSpeakPinyin = (word) => {
-        console.log("SPEAKER");
         let synth = window.speechSynthesis;
         let utterThis = new SpeechSynthesisUtterance(word);
         utterThis.lang = 'zh-CN';
@@ -362,16 +361,13 @@ class Test extends Component {
     }
 
     onListenPinyin = () => {
-        console.log("MICROPHONE");
         let recognition = new window.webkitSpeechRecognition();
-        console.log("RECOGNITION", recognition);
         recognition.lang = 'zh-CN';
 
         recognition.addEventListener('result', event => {
             let result = event.results[0][0].transcript;
             this.submitSpeech(result);
         });
-        console.log("LISTENING");
         this.setState({result: "Listening..."})
         recognition.start();
 
