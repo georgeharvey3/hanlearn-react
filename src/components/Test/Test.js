@@ -269,7 +269,7 @@ class Test extends Component {
     }
 
     onCorrectAnswer = () => {
-        this.setState({result: 'Morrect!'});
+        this.setState({result: 'Correct!'});
         if (this.state.useSound) {
             beep.play();
         }
@@ -353,6 +353,7 @@ class Test extends Component {
     }
 
     onSpeakPinyin = (word) => {
+        console.log("SPEAKER");
         let synth = window.speechSynthesis;
         let utterThis = new SpeechSynthesisUtterance(word);
         utterThis.lang = 'zh-CN';
@@ -361,6 +362,7 @@ class Test extends Component {
     }
 
     onListenPinyin = () => {
+        console.log("MICROPHONE");
         let recognition = new window.webkitSpeechRecognition();
         recognition.lang = 'zh-CN';
 
