@@ -494,7 +494,7 @@ class Test extends Component {
                 borderRadius: '3px'
             }}></div>
 
-        let answerFormat = this.state.answerCategory === 'character' ? characterTest : inputElem;
+        let answerFormat;
 
         if (this.state.answerCategory === 'pinyin' && this.state.useSpeechRecognition) {
             answerFormat = (
@@ -517,6 +517,7 @@ class Test extends Component {
         } else {
             answerFormat = inputElem;
         }
+        
         let displayQ = this.state.question;
         if (this.state.questionCategory === 'meaning') {
             displayQ = displayQ.join('/')
