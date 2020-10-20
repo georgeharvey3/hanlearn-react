@@ -72,9 +72,9 @@ class Test extends Component {
     }
 
     componentDidMount () {
-        let useSound = localStorage.getItem('useSound') === 'false' ? false : true;
+        let useSound = localStorage.getItem('useSound') === 'false' || !this.props.speechAvailable ? false : true;
         let useHandwriting = localStorage.getItem('useHandwriting') === 'false' ? false : true;
-        let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' ? false : true;
+        let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' || !this.props.speechAvailable ? false : true;
 
         this.setState({
             useSound: useSound,
@@ -580,7 +580,9 @@ class Test extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth.token
+        token: state.auth.token,
+        speechAvailable: state.settings.speechAvailable,
+        synthAvailable: state.settings.synthAvailable
     }
 }
 

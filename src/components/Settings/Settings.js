@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import classes from './Settings.module.css';
 
@@ -79,13 +80,15 @@ class Settings extends Component {
                     <input 
                         type="checkbox" 
                         value="useSound"
-                        checked={this.state.useSound}
-                        onChange={this.onCheckChange}/><label>Enable sound</label>                     
+                        checked={this.state.useSound && this.props.speechAvailable}
+                        onChange={this.onCheckChange}
+                        disabled={!this.props.speechAvailable}/><label>Enable sound</label>                     
                     <input 
                         type="checkbox" 
                         value="useSpeechRecognition" 
-                        checked={this.state.useSpeechRecognition}
-                        onChange={this.onCheckChange}/><label>Enable speech recognition</label>                        
+                        checked={this.state.useSpeechRecognition && this.props.speechAvailable}
+                        onChange={this.onCheckChange}
+                        disabled={!this.props.speechAvailable}/><label>Enable speech recognition</label>                        
                     <input 
                         type="checkbox" 
                         value="useHandwriting"
@@ -98,4 +101,11 @@ class Settings extends Component {
     }
 }
 
-export default Settings;
+const mapStateToProps = (state) => {
+    return {
+        speechAvailable: state.settings.speechAvailable,
+        synthAvailable: state.settings.synthAvailable
+    }
+}
+
+export default connect(mapStateToProps)(Settings);

@@ -7,6 +7,7 @@ import thunk from 'redux-thunk';
 
 import wordsReducer from './store/reducers/addWords';
 import authReducer from './store/reducers/auth';
+import settingsReducer from './store/reducers/settings';
 
 import './index.css';
 import App from './App';
@@ -17,7 +18,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
   addWords: wordsReducer, 
-  auth: authReducer
+  auth: authReducer,
+  settings: settingsReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));

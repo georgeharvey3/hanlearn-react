@@ -1,5 +1,3 @@
-import { auth } from './auth.js';
-
 export {
     initWords,
     postWord,
@@ -11,3 +9,7 @@ export {
     authCheckState,
     register
 } from './auth';
+export {
+    setSpeechAvailable,
+    setSynthAvailable
+} from './settings';

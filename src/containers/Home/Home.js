@@ -11,7 +11,34 @@ import Footer from '../../components/Home/Footer/Footer';
 import addCap from '../../assets/images/addwords_pic.png';
 import testCap from '../../assets/images/testwords_pic.png';
 
+import * as actions from '../../store/actions/index';
+
 class Home extends Component {
+
+    componentDidMount = () => {
+        let speechTest;
+        let synthTest;
+
+        try {
+            let speechTest = new window.webkitSpeechRecognition();
+            if (speechTest !== null) {
+                this.props.onSetSpeechAvailable(true);
+            }
+        } catch (err) {
+            this.props.onSetSpeechAvailable(false);
+        }
+
+        try {
+            let utterThis = new SpeechSynthesisUtterance("");
+            if (utterThis !== null) {
+                this.props.onSetSynthAvailable(true);
+            }
+        } catch (err) {
+            this.props.onSetSynthAvailable(false);
+        }
+
+        
+    }
 
     onClickSignUp = () => {
         this.props.history.push("/register");
@@ -46,5 +73,12 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onSetSpeechAvailable: (available) => dispatch(actions.setSpeechAvailable(available)),
+        onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
