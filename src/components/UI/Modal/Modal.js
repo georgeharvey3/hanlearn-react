@@ -15,6 +15,7 @@ const modal = props => {
                 className={classes.Modal}
                 style={{
                     transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
+                    display: props.show ? 'block': 'none',
                     opactiy: props.show ? '1' : '0'
                 }}>
                 {props.children}

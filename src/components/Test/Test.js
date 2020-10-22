@@ -157,6 +157,7 @@ class Test extends Component {
                         drawnCharacters: prevState.drawnCharacters.concat(char)
                     }
                 });
+                document.getElementById('character-target-div').innerHTML = "";
                 this.onCorrectAnswer();
             }
         });
