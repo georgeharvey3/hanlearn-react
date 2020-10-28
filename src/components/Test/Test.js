@@ -113,7 +113,8 @@ class Test extends Component {
         if (allWords.length === 0) {
             return;
         }
-        let selectedWords = testLogic.chooseTestSet(allWords, this.state.numWords);
+        let actualNumWords = allWords.length >= this.state.numWords ? this.state.numWords : allWords.length;
+        let selectedWords = testLogic.chooseTestSet(allWords, actualNumWords);
         if (selectedWords.length === 0 || !selectedWords[0]) {
             this.setState({
                 showErrorMessage: true
