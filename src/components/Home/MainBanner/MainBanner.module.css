@@ -9,6 +9,10 @@
     font-size: 1.1em;
 }
 
+.MainBanner img {
+    width: 100%
+}
+
 .MainBanner section {
     display: flex;
     flex-direction: column;
@@ -17,6 +21,24 @@
     width: 100%;
     text-align: left;
     color: #E6E0AE;
+}
+
+.Image {
+    background-image: url('../../../assets/images/main-image.jpeg');
+    width: 100%;
+    background-size: cover;
+    height: 650px;
+    display: flex;
+    align-items: center;
+}
+
+.Image div {
+    background-color: rgba(0, 0, 0, 0.7);
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 5px;
+    color: #E6E0AE;
+    width: 50%;
 }
 
 .Logo {
@@ -28,6 +50,14 @@
     width: 100%;
 }
 
+.MainBanner h2 {
+    font-size: 2.2em;
+}
+
+.MainBanner p {
+    font-size: 1.5em;
+}
+
 .Buttons {
     display: flex;
     justify-content: center;
@@ -36,18 +66,21 @@
     margin-bottom: 72px;
 }
 
-@media (min-width: 1000px) {
-    .Logo {
-        height: 300px;
+@media (max-width: 1475px) {
+    .Image div {
+        width: 80%
     }
 }
 
-@media (min-width: 854) {
+@media (max-width: 1000px) {
+    .Image {
+        height: 550px
+    }
+}
+
+@media (min-width: 856px) {
     .MainBanner {
         padding-top: 36px
-    }
-    .Buttons {
-        margin-bottom: 32px
     }
 }
 
@@ -61,8 +94,26 @@
     .MainBanner {
         width: 100%;
         padding-bottom: 0;
+        padding-top: 24px;
     }
     .MainBanner .DesktopOnly {
         display: none;
     }
+    .Image {
+        height: 300px;
+        background-image: none;
+    }
+    .Image div {
+        width: 90%;
+        color: #E6E0AE;
+        background-color: transparent;
+        text-align: left;
+    }
+    .Image h2 {
+        font-size: 1.5em;
+    }
+    .Image p {
+        font-size: 1.1em;
+    }
+
 }
