@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     words: [],
-    error: false
+    error: false,
+    loading: false
 }
 
 const reducer = (state=initialState, action) => {
@@ -37,16 +38,23 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 words: []
             }
+        case actionTypes.FETCH_WORDS:
+            return {
+                ...state,
+                loading: true
+            }
         case actionTypes.SET_WORDS:
             return {
                 ...state,
                 words: action.words,
-                error: false
+                error: false,
+                loading: false
             }
         case actionTypes.FETCH_WORDS_FAILED:
             return {
                 ...state,
-                error: true
+                error: true,
+                loading: false
             }
         default:
             return state;

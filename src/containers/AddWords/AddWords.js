@@ -8,6 +8,7 @@ import Table from '../../components/UI/Table/Table';
 import Buttons from '../../components/UI/Buttons/Buttons';
 import * as wordActions from '../../store/actions/index';
 import Remove from '../../components/UI/Table/TableRow/Remove/Remove';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 
 class AddWords extends Component {
@@ -149,7 +150,7 @@ class AddWords extends Component {
 
     render() {
 
-        let table = null;
+        let table = this.props.loading ? <Spinner /> : null;
         
         if (this.props.words && this.props.words.length > 0) {
             let tableRows = this.props.words.map((row, index) => {
@@ -180,6 +181,10 @@ class AddWords extends Component {
                     {tableRows}
                 </Table>
             )
+        }
+
+        if (this.props.error) {
+            table = <p style={{fontSize: "20px", color: "#E6E0AE"}}>Error: Could not fetch words</p>
         }
 
         let clashTableRows = null;
@@ -239,6 +244,7 @@ const mapStateToProps = (state) => {
     return {
         words: state.addWords.words,
         error: state.addWords.error,
+        loading: state.addWords.loading,
         token: state.auth.token
     }
 }

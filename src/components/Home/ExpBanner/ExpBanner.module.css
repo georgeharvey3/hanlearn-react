@@ -15,6 +15,14 @@
     font-size: 1.1em;
 }
 
+.ExpBanner p {
+    font-size: 1.2em;
+}
+
+.ExpBanner h3 {
+    font-size: 1.3em;
+}
+
 .ExpBanner img {
     width: 90%;
     max-height: 400px;
@@ -29,6 +37,16 @@
 
 .ExpBanner .DesktopOnly {
     text-align: center;
+}
+
+@media (max-width: 850px) {
+    .ExpBanner p {
+        font-size: 1em;
+    }
+    
+    .ExpBanner h3 {
+        font-size: 1.1em;
+    }
 }
 
 @media (max-width: 499px) {

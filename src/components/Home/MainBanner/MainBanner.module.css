@@ -30,6 +30,7 @@
     height: 650px;
     display: flex;
     align-items: center;
+    border: 2px solid black;
 }
 
 .Image div {
@@ -73,9 +74,14 @@
 }
 
 @media (max-width: 1000px) {
+    .MainBanner {
+        width: 95%;
+    }
+
     .Image {
         height: 550px
     }
+    
 }
 
 @media (min-width: 856px) {
@@ -102,6 +108,7 @@
     .Image {
         height: 300px;
         background-image: none;
+        border: none;
     }
     .Image div {
         width: 90%;
