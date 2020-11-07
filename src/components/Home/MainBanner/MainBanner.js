@@ -13,7 +13,9 @@ const mainBanner = () => (
                 className={classes.Image}>
                     <div>
                         <h2>A vocabulary learning application, made especially for Mandarin</h2>
-                        <p>With Chinese vocabulary, there is more to learn than in other languages. Make long-lasting connections between the written forms, pronunciations and meanings of Chinese words with HanLearn</p>   
+                        <p>With Chinese vocabulary, there is more to learn than in other languages. </p>
+                        <br/>
+                        <p>Make long-lasting connections between the written forms, pronunciations and meanings of Chinese words with HanLearn</p>   
                     </div>
             </div>
 

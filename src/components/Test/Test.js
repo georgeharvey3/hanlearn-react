@@ -121,6 +121,8 @@ class Test extends Component {
             })
             return;
         }
+
+        console.log(selectedWords);
         
         let permList = testLogic.setPermList(selectedWords, useHandwriting);
         let initialVals = testLogic.assignQA(selectedWords, permList, this.state.charSet);
@@ -312,8 +314,8 @@ class Test extends Component {
 
     onSubmitAnswer = () => {
         /* eslint-disable */
-        if (this.state.answerCategory === 'pinyin' && this.state.answerInput.replace(' ', '').toLowerCase() == this.state.answer.replace(' ', '') || 
-                this.state.answerCategory === 'meaning' && this.state.answer.includes(this.state.answerInput.toLowerCase())) {
+        if (this.state.answerCategory === 'pinyin' && this.state.answerInput.trim().replace(' ', '').toLowerCase() == this.state.answer.replace(' ', '') || 
+                this.state.answerCategory === 'meaning' && this.state.answer.includes(this.state.answerInput.trim().toLowerCase())) {
             this.onCorrectAnswer();
         /* eslint-enable */
         } else if (this.state.answerCategory === 'pinyin') {

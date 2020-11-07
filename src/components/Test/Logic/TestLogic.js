@@ -1,6 +1,9 @@
 export const chooseTestSet = (allWords, numWords) => {
     let today = new Date();
     let dueWords = allWords.filter(word => new Date(word.due_date) <= today);
+    if (numWords > dueWords.length) {
+        numWords = dueWords.length;
+    }
     //let dueWords = allWords;
     let selectedWords = []
     for (let i = 0; i < numWords; i ++) {
