@@ -80,7 +80,7 @@ class Settings extends Component {
                     <input 
                         type="checkbox" 
                         value="useSound"
-                        checked={this.state.useSound && this.props.speechAvailable}
+                        checked={this.state.useSound && this.props.synthAvailable}
                         onChange={this.onCheckChange}
                         disabled={!this.props.synthAvailable}/><label>Enable sound</label>                     
                     <input 
