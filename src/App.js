@@ -17,6 +17,27 @@ class App extends Component {
   constructor (props) {
     super(props);
     this.props.onTryAutoLogin();
+
+    let speechTest;
+    let synthTest;
+
+    try {
+        let speechTest = new window.webkitSpeechRecognition();
+        if (speechTest !== null) {
+            this.props.onSetSpeechAvailable(true);
+        }
+    } catch (err) {
+        this.props.onSetSpeechAvailable(false);
+    }
+
+    try {
+        let utterThis = new SpeechSynthesisUtterance("");
+        if (utterThis !== null) {
+            this.props.onSetSynthAvailable(true);
+        }
+    } catch (err) {
+        this.props.onSetSynthAvailable(false);
+    }
   }
 
   render () {
@@ -40,7 +61,10 @@ class App extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onTryAutoLogin: () => dispatch(actions.authCheckState())
+    onTryAutoLogin: () => dispatch(actions.authCheckState()),
+    onSetSpeechAvailable: (available) => dispatch(actions.setSpeechAvailable(available)),
+    onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available))
+
   }
 }
 

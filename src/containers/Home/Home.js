@@ -15,31 +15,6 @@ import * as actions from '../../store/actions/index';
 
 class Home extends Component {
 
-    componentDidMount = () => {
-        let speechTest;
-        let synthTest;
-
-        try {
-            let speechTest = new window.webkitSpeechRecognition();
-            if (speechTest !== null) {
-                this.props.onSetSpeechAvailable(true);
-            }
-        } catch (err) {
-            this.props.onSetSpeechAvailable(false);
-        }
-
-        try {
-            let utterThis = new SpeechSynthesisUtterance("");
-            if (utterThis !== null) {
-                this.props.onSetSynthAvailable(true);
-            }
-        } catch (err) {
-            this.props.onSetSynthAvailable(true);
-        }
-
-        
-    }
-
     onClickSignUp = () => {
         this.props.history.push("/register");
     }
@@ -70,13 +45,6 @@ class Home extends Component {
 const mapStateToProps = (state) => {
     return {
         isAuthenticated: state.auth.token !== null
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onSetSpeechAvailable: (available) => dispatch(actions.setSpeechAvailable(available)),
-        onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available))
     }
 }
 
