@@ -34,7 +34,7 @@ class Home extends Component {
                 this.props.onSetSynthAvailable(true);
             }
         } catch (err) {
-            this.props.onSetSynthAvailable(false);
+            this.props.onSetSynthAvailable(true);
         }
 
         
