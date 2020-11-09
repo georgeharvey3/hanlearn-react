@@ -5,7 +5,7 @@ import Aux from '../../hoc/Aux';
 import Modal from '../../components/UI/Modal/Modal';
 import MainBanner from '../../components/AddWords/MainBanner';
 import Table from '../../components/UI/Table/Table';
-import Buttons from '../../components/UI/Buttons/Buttons';
+import Button from '../../components/UI/Buttons/Button/Button';
 import * as wordActions from '../../store/actions/index';
 import Remove from '../../components/UI/Table/TableRow/Remove/Remove';
 import Spinner from '../../components/UI/Spinner/Spinner';
@@ -101,8 +101,9 @@ class AddWords extends Component {
 
         let newMeaning = e.target.textContent;
 
+        /* eslint-disable */
         let regex = "^[A-Za-z'()\-\? ]+(?:\/[[A-Za-z'()\-\? ]+)*$"
-        
+        /* eslint-enable */
         if (!(newMeaning.match(regex))) {
             return;
         }
@@ -154,7 +155,6 @@ class AddWords extends Component {
         
         if (this.props.words && this.props.words.length > 0) {
             let tableRows = this.props.words.map((row, index) => {
-                let dueDateRow = window.screen.width > 500 ? <td>{row.due_date}</td> : null;
                 return (
                     <tr key={index}>
                         <td>{row.simp}</td>
@@ -172,9 +172,6 @@ class AddWords extends Component {
                     </tr>
                 );
             });
-
-            let tableHeadings = window.screen.width > 500 ? ['Character(s)', 'Pinyin', 'Meaning', 'Due Date', 'Remove'] : 
-                ['Character(s)', 'Pinyin', 'Meaning','Remove'];
 
             table = (
                 <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Due Date', 'Remove']}>
@@ -234,7 +231,7 @@ class AddWords extends Component {
                     newWord={this.state.newWord}
                     submitClicked={this.searchForWord}/>
                 {table}
-                <Buttons clickedHandlers={[this.onTestHandler, this.onClearHandler]}>{['Test', 'Clear']}</Buttons>
+                <Button clicked={this.onTestHandler}>Test</Button>
             </Aux>
         );
     }

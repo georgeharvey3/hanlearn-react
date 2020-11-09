@@ -11,8 +11,6 @@ import Footer from '../../components/Home/Footer/Footer';
 import addCap from '../../assets/images/addwords_pic.png';
 import testCap from '../../assets/images/testwords_pic.png';
 
-import * as actions from '../../store/actions/index';
-
 class Home extends Component {
 
     onClickSignUp = () => {

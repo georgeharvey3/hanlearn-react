@@ -55,7 +55,9 @@ class Auth extends Component {
             isValid = value.length <= rules.maxLength && isValid;
         }
         if (rules.isEmail) {
+            /* eslint-disable */
             const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+            /* eslint-enable */
             isValid = pattern.test(value) && isValid
         }
 

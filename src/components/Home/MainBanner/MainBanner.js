@@ -3,7 +3,6 @@ import React from 'react';
 import classes from './MainBanner.module.css';
 
 import Aux from '../../../hoc/Aux';
-import bannerPicture from '../../../assets/images/main-image.jpeg';
 
 
 const mainBanner = () => (

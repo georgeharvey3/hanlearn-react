@@ -18,13 +18,12 @@ class App extends Component {
     super(props);
     this.props.onTryAutoLogin();
 
-    let speechTest;
-    let synthTest;
-
     try {
         let speechTest = new window.webkitSpeechRecognition();
         if (speechTest !== null) {
-            this.props.onSetSpeechAvailable(true);
+          this.props.onSetSpeechAvailable(true);
+        } else {
+          this.props.onSetSpeechAvailable(false);
         }
     } catch (err) {
         this.props.onSetSpeechAvailable(false);
@@ -33,11 +32,38 @@ class App extends Component {
     try {
         let utterThis = new SpeechSynthesisUtterance("");
         if (utterThis !== null) {
-            this.props.onSetSynthAvailable(true);
+          const voices = this.getVoicesReal();
+          let chineseVoice;
+          voices.then(voices => {
+            chineseVoice = voices.filter(voice => voice.lang.indexOf('zh-CN') === 0)[0];
+            if (chineseVoice) {
+              this.props.onSetSynthAvailable(true);
+            } else {
+              this.props.onSetSynthAvailable(false);
+            }
+          });
+        } else {
+          this.props.onSetSynthAvailable(false);
         }
     } catch (err) {
         this.props.onSetSynthAvailable(false);
     }
+  }
+
+  getVoicesReal = () => {
+    return new Promise(
+      function(resolve, reject) {
+        let synth = window.speechSynthesis;
+        let id;
+
+        id = setInterval(() => {
+          if (synth.getVoices().length !== 0) {
+            resolve(synth.getVoices());
+            clearInterval(id);
+          }
+        }, 10);
+      }
+    )
   }
 
   render () {
