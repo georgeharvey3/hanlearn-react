@@ -9,6 +9,8 @@
 
 
 
+
+
 .Test span {
     background-color: #E6E0AE;
     color: #AA381E;
@@ -34,4 +36,17 @@
 
 .QuestionCar h2 {
     overflow-wrap: normal;
+}
+
+.InputDiv {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+@media (max-height: 825px) {
+    .InputDiv {
+        height: auto;
+    }
 }

@@ -234,7 +234,7 @@ class Test extends Component {
                 writer.quiz({
                     onComplete: () => {
                         document.getElementById('character-target-div').innerHTML = "";
-                        let writer = window.HanziWriter.create('character-target-div', char[1], {
+                        let writer = window.HanziWriter.create('character-target-div', char[2], {
                             width: 150,
                             height: 150,
                             padding: 20,
@@ -557,12 +557,7 @@ class Test extends Component {
                             {onQuestionCard}
                         </div>
                         <p className={classes.Result}>{this.state.result}</p>
-                        <div style={{
-                            height: '200px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end'
-                        }}>
+                        <div className={classes.InputDiv}>
                             {answerFormat}
                         </div>
                         <Buttons clickedHandlers={[this.onIDontKnow, this.onSubmitAnswer]}>{["I Don't Know", "Submit"]}</Buttons>
