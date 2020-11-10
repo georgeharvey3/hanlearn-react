@@ -121,8 +121,6 @@ class Test extends Component {
             })
             return;
         }
-
-        console.log(selectedWords);
         
         let permList = testLogic.setPermList(selectedWords, useHandwriting);
         let initialVals = testLogic.assignQA(selectedWords, permList, this.state.charSet);
@@ -480,9 +478,10 @@ class Test extends Component {
         this.props.history.push("/add-words");
     }
 
-    onFocusEntry =  () => {
+    onFocusEntry =  (e) => {
+        e.preventDefault(); e.stopPropagation();
         let topVal = document.getElementById('q-phrase-box').offsetTop;
-        window.scrollTo(0, topVal + 79);
+        window.scrollTo(0, 56);
     }
 
     render () {
@@ -492,7 +491,8 @@ class Test extends Component {
         let inputElem = <Input 
                             keyPressed={this.onKeyPress} 
                             value={this.state.answerInput}
-                            changed={this.onInputChanged}/>
+                            changed={this.onInputChanged}
+                            focussed={this.onFocusEntry}/>
 
         let characterTest = <div 
             id="character-target-div" 
