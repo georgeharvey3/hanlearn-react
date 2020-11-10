@@ -480,6 +480,11 @@ class Test extends Component {
         this.props.history.push("/add-words");
     }
 
+    onFocusEntry =  () => {
+        topVal = document.getElementById('q-phrase-box').offsetTop;
+        window.scrollTo(0, topVal + 79);
+    }
+
     render () {
         let progressNum = Math.floor(this.state.permList.length / this.state.initNumPerms * 100);
         progressNum = progressNum ? progressNum : 0;
@@ -552,7 +557,7 @@ class Test extends Component {
                     </Modal>
                     <div className={classes.Test}>
                         <ProgressBar progress={progressNum}/>
-                        <h3>Enter the <span>{this.state.answerCategory}</span> for...</h3>
+                        <h3 id="q-phrase-box">Enter the <span>{this.state.answerCategory}</span> for...</h3>
                         <div className={classes.QuestionCard}>
                             {onQuestionCard}
                         </div>
