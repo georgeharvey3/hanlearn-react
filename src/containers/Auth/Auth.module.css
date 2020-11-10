@@ -19,8 +19,3 @@
 .Auth h1 {
     color:  #AA381E;
 }
-
-.Auth form {
-    display: flex;
-    flex-direction: column;
-}
