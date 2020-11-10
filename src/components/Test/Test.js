@@ -481,7 +481,7 @@ class Test extends Component {
     }
 
     onFocusEntry =  () => {
-        topVal = document.getElementById('q-phrase-box').offsetTop;
+        let topVal = document.getElementById('q-phrase-box').offsetTop;
         window.scrollTo(0, topVal + 79);
     }
 
