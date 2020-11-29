@@ -12,11 +12,24 @@ class TestWords extends Component {
     }
 
     componentDidMount () {
-        this.props.onInitWords(this.props.token);
+        if (!this.props.isTest) {
+            this.props.onInitWords(this.props.token);
+        }
     }    
 
     render () {
         let test = null;
+
+        if (this.props.isTest) {
+            test = <Test isTest words={[{
+                simp: '你好',
+                trad: '你好',
+                pinyin: 'ni3 hao3',
+                meaning: 'hello/hi',
+                due_date: new Date()
+            }]} />
+            return test;
+        }
 
         if (this.props.words && this.props.words.length > 0) {
             test = <Test words={this.props.words}/>

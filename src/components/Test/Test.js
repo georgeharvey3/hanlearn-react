@@ -66,8 +66,7 @@ class Test extends Component {
             useHandwriting: true,
             useSpeechRecognition: true,
             showErrorMessage: false,
-        }
-    
+        }    
 
     }
 
@@ -76,11 +75,23 @@ class Test extends Component {
         let useHandwriting = localStorage.getItem('useHandwriting') === 'false' ? false : true;
         let useSpeechRecognition = localStorage.getItem('useSpeechRecognition') === 'false' || !this.props.speechAvailable ? false : true;
 
+        if (this.props.isTest) {
+            if (this.props.speechAvailable) {
+                useSpeechRecognition = true;
+            }
+
+            if (this.props.synthAvailable) {
+                useSound = true;
+            }
+
+            useHandwriting = true;
+        }
+
         this.setState({
             useSound: useSound,
             useHandwriting: useHandwriting,
             useSpeechRecognition: useSpeechRecognition
-        })
+        });
 
         this.onInitialiseTestSet(useHandwriting);
     }
@@ -115,6 +126,7 @@ class Test extends Component {
         }
         let actualNumWords = allWords.length >= this.state.numWords ? this.state.numWords : allWords.length;
         let selectedWords = testLogic.chooseTestSet(allWords, actualNumWords);
+
         if (selectedWords.length === 0 || !selectedWords[0]) {
             this.setState({
                 showErrorMessage: true
@@ -168,6 +180,11 @@ class Test extends Component {
         document.getElementById('character-target-div').innerHTML = "";
         let flashChar = !this.state.drawnCharacters.includes(char);
 
+        let numBeforeHint = 100;
+        if (this.props.isTest) {
+            numBeforeHint = 1;
+        }
+
         let writer = window.HanziWriter.create('character-target-div', char[0], {
             width: 150,
             height: 150,
@@ -175,7 +192,7 @@ class Test extends Component {
             delayBetweenStrokes: 300,
             showOutline: false,
             showCharacter: flashChar,
-            showHintAfterMisses: 100
+            showHintAfterMisses: numBeforeHint
         });
         writer.quiz({
             onComplete: () => {
@@ -187,7 +204,7 @@ class Test extends Component {
                     delayBetweenStrokes: 300,
                     showOutline: false,
                     showCharacter: flashChar,
-                    showHintAfterMisses: 100
+                    showHintAfterMisses: numBeforeHint
                 });
                 writer.quiz({
                     onComplete: () => {
@@ -439,7 +456,10 @@ class Test extends Component {
                 score: 4-count
             }); 
             
-            this.onSendScores(sendScores);
+            if (!this.props.isTest) {
+                this.onSendScores(sendScores);
+            }
+
             this.setState({
                 testFinished: true,
                 scoreList: wordScores
@@ -482,6 +502,10 @@ class Test extends Component {
         e.preventDefault(); e.stopPropagation();
         let topVal = document.getElementById('q-phrase-box').offsetTop;
         window.scrollTo(0, topVal - 5);
+    }
+
+    onHomeClicked = () => {
+        this.props.history.push("/");
     }
 
     render () {
@@ -543,7 +567,8 @@ class Test extends Component {
             );
         }
 
-        if (this.state.testSet.length !== 0) {
+        if (this.state.testSet.length !== 0 || this.props.isTest) {
+            
             return (
                 <Aux>
                     <Backdrop show={this.state.testFinished} />
@@ -553,7 +578,10 @@ class Test extends Component {
                             backgroundColor: 'rgb(82, 129, 122)',
                             top: '20%'
                         }}>
-                        <TestSummary scores={this.state.scoreList}/>
+                        <TestSummary 
+                            isTest={this.props.isTest} 
+                            homeClicked={this.onHomeClicked} 
+                            scores={this.state.scoreList}/>
                     </Modal>
                     <div className={classes.Test}>
                         <ProgressBar progress={progressNum}/>

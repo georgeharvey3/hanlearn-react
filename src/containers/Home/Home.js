@@ -17,8 +17,12 @@ class Home extends Component {
         this.props.history.push("/register");
     }
 
+    onTryOutClicked = () => {
+        this.props.history.push("/tryout");
+    }
+
     render () {
-        let signUpBanner = <SignUpBanner signUpClicked={this.onClickSignUp}/>;
+        let signUpBanner = <SignUpBanner signUpClicked={this.onClickSignUp} tryOutClicked={this.onTryOutClicked}/>;
 
         if (this.props.isAuthenticated) {
             signUpBanner = null;

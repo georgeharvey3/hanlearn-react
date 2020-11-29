@@ -67,6 +67,7 @@ class App extends Component {
   }
 
   render () {
+  
     return (
       <div className="App">
         <Layout>
@@ -78,6 +79,12 @@ class App extends Component {
             <Route path="/register" component={Register} />
             <Route path="/logout" component={Logout} />
             <Route path="/settings" component={SettingsPage} />
+            <Route 
+              path="/tryout" 
+              render={(props) => (
+                <TestWords isTest={true} />
+              )}
+            />
           </Switch>
         </Layout>
       </div>
