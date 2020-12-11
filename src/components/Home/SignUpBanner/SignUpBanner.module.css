@@ -13,7 +13,14 @@
     box-sizing: border-box;
     color: #AA381E;
     text-align: center;
+    font-size: 1.4em;
 }
+
+@media (max-width: 499px) {
+    .SignUpBanner{
+        font-size: 1.1em;
+    }
+} 
 
 .SignUpBanner h3, p {
     margin: 10px 0;

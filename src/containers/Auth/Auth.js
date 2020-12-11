@@ -16,7 +16,7 @@ class Auth extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'email',
-                    placeholder: 'Mail Address'
+                    placeholder: 'Email Address'
                 },
                 value: '',
                 validation: null,
@@ -129,7 +129,7 @@ class Auth extends Component {
         let errorMessage = null;
         
         if (this.props.error) {
-            errorMessage = <p>{this.props.error.message}</p>
+            errorMessage = <p>{this.props.error}</p>
         }
 
         let authRedirect = null;

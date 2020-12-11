@@ -1,3 +1,4 @@
+import { findAllByDisplayValue } from '@testing-library/react';
 import * as actionTypes from './actionTypes';
 
 export const authStart = () => {
@@ -68,14 +69,18 @@ export const auth = (email, password) => {
                     dispatch(checkAuthTimeOut(new Date(data.expires_at).getTime() - new Date().getTime()));
                 });
             } else {
-                response.json().then(data => {
-                    dispatch(authFail(data));
+                let json = response.json();
+                json.then(data => {
+                    dispatch(authFail(data.message));
+                })
+                .catch(e => {
+                    dispatch(authFail(response.statusText));
                 });
             }
         })
         .catch(err => {
             dispatch(authFail(err));
-        })
+        });
     }
 }
 
@@ -98,8 +103,12 @@ export const register = (email, username, password) => {
             if (response.ok) {
                 dispatch(registerSuccess());
             } else {
-                response.json().then(data => {
-                    dispatch(authFail(data));
+                let json = response.json();
+                json.then(data => {
+                    dispatch(authFail(data.message));
+                })
+                .catch(err => {
+                    dispatch(authFail(response.statusText));
                 })
             }
         })

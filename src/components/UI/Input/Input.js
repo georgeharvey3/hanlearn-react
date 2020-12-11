@@ -11,7 +11,8 @@ const input = props => (
         onKeyPress={props.keyPressed}
         value={props.value}
         onFocus={props.focussed}
-        onBlur={props.blurred}/>
+        onBlur={props.blurred}
+        autoFocus={props.autoFocus}/>
 );
 
 export default input;

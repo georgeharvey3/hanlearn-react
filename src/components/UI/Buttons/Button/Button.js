@@ -15,6 +15,7 @@ const button = (props) => {
             
     return (
         <button 
+            id={props.id}
             className={attachedClasses.join(' ')}
             onClick={props.clicked}
             disabled={props.disabled}>

@@ -11,7 +11,6 @@ import Modal from '../UI/Modal/Modal';
 import Backdrop from '../UI/Backdrop/Backdrop';
 import ProgressBar from './ProgressBar/ProgressBar';
 import Input from '../UI/Input/Input';
-import Buttons from '../UI/Buttons/Buttons';
 import TestSummary from './TestSummary/TestSummary';
 import PictureButton from '../UI/Buttons/PictureButton/PictureButton';
 import Button from '../UI/Buttons/Button/Button';
@@ -66,6 +65,7 @@ class Test extends Component {
             useHandwriting: true,
             useSpeechRecognition: true,
             showErrorMessage: false,
+            redoChar: false
         }    
 
     }
@@ -77,11 +77,11 @@ class Test extends Component {
 
         if (this.props.isTest) {
             if (this.props.speechAvailable) {
-                useSpeechRecognition = true;
+                useSpeechRecognition = false;
             }
 
             if (this.props.synthAvailable) {
-                useSound = true;
+                useSound = false;
             }
 
             useHandwriting = true;
@@ -98,7 +98,9 @@ class Test extends Component {
 
     componentDidUpdate = (prevProps, prevState) => {
 
-        if (prevState.perm !== this.state.perm) {
+        if (prevState.perm !== this.state.perm || this.state.redoChar) {
+            
+            console.log("UPDATING");
             if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
                 this.onSpeakPinyin(this.state.chosenCharacter);
             }
@@ -150,9 +152,191 @@ class Test extends Component {
 
     }
 
+    onidkCharOne = (writer, char, numBeforeHint) => {
+        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
+            return;
+        }
+        writer.animateCharacter({
+            onComplete: () => {
+                console.log("COMPLETED ANIMATION");
+                console.log(this.state.redoChar);
+                let charGrid = document.getElementById('character-target-div');
+                if (charGrid !== null) {
+                    charGrid.innerHTML = "";
+                }
+                this.setState({idkDisabled: true});
+                this.setState(prevState => {
+                    let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
+                    return {
+                        idkList: prevState.idkList.concat(idkChar)
+                    }
+                });
+
+                let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
+
+                let redoChar = false;
+
+                if (newQuestion.perm === this.state.perm) {
+                    redoChar = true;
+                }
+                
+                this.setState({
+                    perm: newQuestion.perm,
+                    answer: newQuestion.answer,
+                    answerCategory: newQuestion.answerCategory,
+                    question: newQuestion.question,
+                    questionCategory: newQuestion.questionCategory,
+                    chosenCharacter: newQuestion.chosenCharacter,
+                    idkDisabled: false,
+                    result: '',
+                    answerInput: '',
+                    redoChar: redoChar
+                        });
+                }
+        });
+    }
+
+    onidkCharTwo = (writer, char, numBeforeHint) => {
+        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
+            return;
+        }
+        writer.animateCharacter({
+            onComplete: () => {
+                document.getElementById('character-target-div').innerHTML = "";
+                let writer = window.HanziWriter.create('character-target-div', char[1], {
+                    width: 150,
+                    height: 150,
+                    padding: 20,
+                    delayBetweenStrokes: 10,
+                    strokeAnimationSpeed: 1,
+                    showOutline: false,
+                    showCharacter: false,
+                    showHintAfterMisses: numBeforeHint
+                });
+                writer.animateCharacter({
+                    onComplete: () => {
+                        console.log("COMPLETED ANIMATION");
+                        console.log(this.state.redoChar);
+                        let charGrid = document.getElementById('character-target-div');
+                        if (charGrid !== null) {
+                            charGrid.innerHTML = "";
+                        }
+                        this.setState({idkDisabled: true});
+                        this.setState(prevState => {
+                            let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
+                            return {
+                                idkList: prevState.idkList.concat(idkChar)
+                            }
+                        });
+
+                        let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
+
+                        let redoChar = false;
+
+                        if (newQuestion.perm === this.state.perm) {
+                            redoChar = true;
+                        }
+                        
+                        this.setState({
+                            perm: newQuestion.perm,
+                            answer: newQuestion.answer,
+                            answerCategory: newQuestion.answerCategory,
+                            question: newQuestion.question,
+                            questionCategory: newQuestion.questionCategory,
+                            chosenCharacter: newQuestion.chosenCharacter,
+                            idkDisabled: false,
+                            result: '',
+                            answerInput: '',
+                            redoChar: redoChar
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    onidkCharThree = (writer, char, numBeforeHint) => {
+        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
+            return;
+        }
+        writer.animateCharacter({
+            onComplete: () => {
+                document.getElementById('character-target-div').innerHTML = "";
+                let writer = window.HanziWriter.create('character-target-div', char[1], {
+                    width: 150,
+                    height: 150,
+                    padding: 20,
+                    delayBetweenStrokes: 10,
+                    strokeAnimationSpeed: 1,
+                    showOutline: false,
+                    showCharacter: false,
+                    showHintAfterMisses: numBeforeHint
+                });
+                writer.animateCharacter({
+                    onComplete: () => {
+                        document.getElementById('character-target-div').innerHTML = "";
+                        let writer = window.HanziWriter.create('character-target-div', char[2], {
+                            width: 150,
+                            height: 150,
+                            padding: 20,
+                            delayBetweenStrokes: 10,
+                            strokeAnimationSpeed: 1,
+                            showOutline: false,
+                            showCharacter: false,
+                            showHintAfterMisses: numBeforeHint
+                        });
+                        writer.animateCharacter({
+                            onComplete: () => {
+                                console.log("COMPLETED ANIMATION");
+                                console.log(this.state.redoChar);
+                                let charGrid = document.getElementById('character-target-div');
+                                if (charGrid !== null) {
+                                    charGrid.innerHTML = "";
+                                }
+                                this.setState({idkDisabled: true});
+                                this.setState(prevState => {
+                                    let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
+                                    return {
+                                        idkList: prevState.idkList.concat(idkChar)
+                                    }
+                                });
+
+                                let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
+
+                                let redoChar = false;
+
+                                if (newQuestion.perm === this.state.perm) {
+                                    redoChar = true;
+                                }
+                                
+                                this.setState({
+                                    perm: newQuestion.perm,
+                                    answer: newQuestion.answer,
+                                    answerCategory: newQuestion.answerCategory,
+                                    question: newQuestion.question,
+                                    questionCategory: newQuestion.questionCategory,
+                                    chosenCharacter: newQuestion.chosenCharacter,
+                                    idkDisabled: false,
+                                    result: '',
+                                    answerInput: '',
+                                    redoChar: redoChar
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     onNewCharacterOne = (char) => {
         document.getElementById('character-target-div').innerHTML = "";
         let flashChar = !this.state.drawnCharacters.includes(char);
+
+        let numBeforeHint = 100;
+        if (this.props.isTest) {
+            numBeforeHint = 1;
+        }
 
         let writer = window.HanziWriter.create('character-target-div', char, {
             width: 150,
@@ -163,6 +347,16 @@ class Test extends Component {
             showCharacter: flashChar,
             showHintAfterMisses: 100
         });
+
+        let idkButton = document.getElementById('idk');
+        let idkCharNoParams = () => {
+            this.onidkCharOne(writer, char, numBeforeHint);
+        }
+        idkButton.addEventListener('click', function executeIdk() {
+            idkCharNoParams();
+            idkButton.removeEventListener('click', executeIdk, false);
+        });
+
         writer.quiz({
             onComplete: () => {
                 this.setState(prevState => {
@@ -177,8 +371,10 @@ class Test extends Component {
     }
 
     onNewCharacterTwo = (char) => {
-        document.getElementById('character-target-div').innerHTML = "";
-        let flashChar = !this.state.drawnCharacters.includes(char);
+        let charGrid = document.getElementById('character-target-div');
+        if (charGrid !== null) {
+            charGrid.innerHTML = "";
+        }        let flashChar = !this.state.drawnCharacters.includes(char);
 
         let numBeforeHint = 100;
         if (this.props.isTest) {
@@ -189,11 +385,22 @@ class Test extends Component {
             width: 150,
             height: 150,
             padding: 20,
-            delayBetweenStrokes: 300,
+            delayBetweenStrokes: 10,
+            strokeAnimationSpeed: 1,
             showOutline: false,
             showCharacter: flashChar,
             showHintAfterMisses: numBeforeHint
         });
+        
+        let idkButton = document.getElementById('idk');
+        let idkCharNoParams = () => {
+            this.onidkCharTwo(writer, char, numBeforeHint);
+        }
+        idkButton.addEventListener('click', function executeIdk() {
+            idkCharNoParams();
+            idkButton.removeEventListener('click', executeIdk, false);
+        });
+        
         writer.quiz({
             onComplete: () => {
                 document.getElementById('character-target-div').innerHTML = "";
@@ -225,6 +432,11 @@ class Test extends Component {
         document.getElementById('character-target-div').innerHTML = "";
         let flashChar = !this.state.drawnCharacters.includes(char);
 
+        let numBeforeHint = 100;
+        if (this.props.isTest) {
+            numBeforeHint = 1;
+        }
+
         let writer = window.HanziWriter.create('character-target-div', char[0], {
             width: 150,
             height: 150,
@@ -234,6 +446,16 @@ class Test extends Component {
             showCharacter: flashChar,
             showHintAfterMisses: 100
         });
+
+        let idkButton = document.getElementById('idk');
+        let idkCharNoParams = () => {
+            this.onidkCharThree(writer, char, numBeforeHint);
+        }
+        idkButton.addEventListener('click', function executeIdk() {
+            idkCharNoParams();
+            idkButton.removeEventListener('click', executeIdk, false);
+        });
+
         writer.quiz({
             onComplete: () => {
                 document.getElementById('character-target-div').innerHTML = "";
@@ -393,13 +615,15 @@ class Test extends Component {
     }
 
     onIDontKnow = () => {
-        this.setState({answerInput: ''});
-
-        let displayAnswer = this.state.answer;
-        if (this.state.answerCategory === 'meaning') {
-            displayAnswer = displayAnswer.join('/');
+        
+        let charDivExists = this.state.answerCategory === 'character' && this.state.useHandwriting;
+        
+        if (charDivExists) {
+            return;
         }
-        this.setState({result: `Answer was '${displayAnswer}'`});
+        
+        console.log("idk executing");
+
         this.setState({idkDisabled: true});
         this.setState(prevState => {
             let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
@@ -408,7 +632,17 @@ class Test extends Component {
             }
         });
 
+        this.setState({answerInput: ''});
+
+        let displayAnswer = this.state.answer;
+        if (this.state.answerCategory === 'meaning') {
+            displayAnswer = displayAnswer.join('/');
+        }
+        this.setState({result: `Answer was '${displayAnswer}'`});
+
+
         let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
+        
         setTimeout(
             function() {
                 this.setState({
@@ -427,6 +661,7 @@ class Test extends Component {
             2000
         );
     }
+    
 
     onFinishTest = () => {
         let idkCounts = testLogic.Counter(this.state.idkList);
@@ -455,15 +690,15 @@ class Test extends Component {
                 word_id: word.id,
                 score: 4-count
             }); 
-            
-            if (!this.props.isTest) {
-                this.onSendScores(sendScores);
-            }
+        });
 
-            this.setState({
-                testFinished: true,
-                scoreList: wordScores
-            });
+        if (!this.props.isTest) {
+            this.onSendScores(sendScores);
+        }
+
+        this.setState({
+            testFinished: true,
+            scoreList: wordScores
         });
     }
 
@@ -516,7 +751,8 @@ class Test extends Component {
                             keyPressed={this.onKeyPress} 
                             value={this.state.answerInput}
                             changed={this.onInputChanged}
-                            focussed={this.onFocusEntry}/>
+                            focussed={this.onFocusEntry}
+                            autoFocus={true}/>
 
         let characterTest = <div 
             id="character-target-div" 
@@ -568,7 +804,7 @@ class Test extends Component {
         }
 
         if (this.state.testSet.length !== 0 || this.props.isTest) {
-            
+            let verb = this.state.answerCategory === 'character' ? 'Draw the ' : 'Enter the ';
             return (
                 <Aux>
                     <Backdrop show={this.state.testFinished} />
@@ -585,7 +821,7 @@ class Test extends Component {
                     </Modal>
                     <div className={classes.Test}>
                         <ProgressBar progress={progressNum}/>
-                        <h3 id="q-phrase-box">Enter the <span>{this.state.answerCategory}</span> for...</h3>
+                        <h3 id="q-phrase-box">{verb}<span>{this.state.answerCategory}</span> for...</h3>
                         <div className={classes.QuestionCard}>
                             {onQuestionCard}
                         </div>
@@ -593,7 +829,10 @@ class Test extends Component {
                         <div className={classes.InputDiv}>
                             {answerFormat}
                         </div>
-                        <Buttons clickedHandlers={[this.onIDontKnow, this.onSubmitAnswer]}>{["I Don't Know", "Submit"]}</Buttons>
+                        <div style={{paddingTop: '30px', display: 'flex', justifyContent: 'center'}}>
+                            <Button clicked={this.onIDontKnow} id="idk">I Don't Know</Button>
+                            <Button clicked={this,this.onSubmitAnswer}>Submit</Button>
+                        </div>
                     </div>
                 </Aux>
             );
