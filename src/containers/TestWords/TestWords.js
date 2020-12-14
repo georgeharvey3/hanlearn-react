@@ -31,10 +31,8 @@ class TestWords extends Component {
             return test;
         }
 
-        if (this.props.words && this.props.words.length > 0) {
-            test = <Test words={this.props.words}/>
-
-        }
+        test = <Test words={this.props.words}/>
+        
         return test
     }
 }

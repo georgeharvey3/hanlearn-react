@@ -59,6 +59,7 @@ class Test extends Component {
             scoreList: [],
             testFinished: false,
             showInput: false,
+            showInputChars: [],
             drawnCharacters: [],
             numSpeakTries: 0,
             useSound: true,
@@ -99,8 +100,6 @@ class Test extends Component {
     componentDidUpdate = (prevProps, prevState) => {
 
         if (prevState.perm !== this.state.perm || this.state.redoChar) {
-            
-            console.log("UPDATING");
             if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
                 this.onSpeakPinyin(this.state.chosenCharacter);
             }
@@ -124,6 +123,9 @@ class Test extends Component {
     onInitialiseTestSet = (useHandwriting) => {
         let allWords = this.props.words.slice();
         if (allWords.length === 0) {
+            this.setState({
+                showErrorMessage: true
+            });
             return;
         }
         let actualNumWords = allWords.length >= this.state.numWords ? this.state.numWords : allWords.length;
@@ -132,7 +134,7 @@ class Test extends Component {
         if (selectedWords.length === 0 || !selectedWords[0]) {
             this.setState({
                 showErrorMessage: true
-            })
+            });
             return;
         }
         
@@ -158,8 +160,6 @@ class Test extends Component {
         }
         writer.animateCharacter({
             onComplete: () => {
-                console.log("COMPLETED ANIMATION");
-                console.log(this.state.redoChar);
                 let charGrid = document.getElementById('character-target-div');
                 if (charGrid !== null) {
                     charGrid.innerHTML = "";
@@ -215,8 +215,6 @@ class Test extends Component {
                 });
                 writer.animateCharacter({
                     onComplete: () => {
-                        console.log("COMPLETED ANIMATION");
-                        console.log(this.state.redoChar);
                         let charGrid = document.getElementById('character-target-div');
                         if (charGrid !== null) {
                             charGrid.innerHTML = "";
@@ -287,8 +285,6 @@ class Test extends Component {
                         });
                         writer.animateCharacter({
                             onComplete: () => {
-                                console.log("COMPLETED ANIMATION");
-                                console.log(this.state.redoChar);
                                 let charGrid = document.getElementById('character-target-div');
                                 if (charGrid !== null) {
                                     charGrid.innerHTML = "";
@@ -510,7 +506,10 @@ class Test extends Component {
     }
 
     onCorrectAnswer = () => {
-        this.setState({result: 'Correct!'});
+        this.setState({
+            result: 'Correct!',
+            showInput: false
+        });
         if (this.state.useSound) {
             beep.play();
         }
@@ -573,11 +572,13 @@ class Test extends Component {
 
         if (speech === this.state.chosenCharacter) {
             this.onCorrectAnswer();
-        } else if (asPinyin.join(' ') === this.state.answer.slice(1, this.state.answer.length-1)) {
+        } else if (asPinyin.join(' ') === this.state.answer) {
             this.onCorrectAnswer();
         } else {
-            fail.play();
-            if (this.state.numSpeakTries > 1) {
+            if (this.state.useSound) {
+                fail.play();
+            }
+            if (this.state.numSpeakTries > -1) {
                 this.setState({
                     result: `We heard: '${asPinyin.join(' ')}', which is wrong. Try again...`,
                     showInput: true
@@ -622,8 +623,6 @@ class Test extends Component {
             return;
         }
         
-        console.log("idk executing");
-
         this.setState({idkDisabled: true});
         this.setState(prevState => {
             let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
@@ -777,7 +776,8 @@ class Test extends Component {
                         keyPressed={this.onKeyPress} 
                         value={this.state.answerInput}
                         changed={this.onInputChanged}
-                        placeholder="Type pinyin..."/>
+                        placeholder="Type pinyin..."
+                        autoFocus={true}/>
                     ) : null}
                 </div>
             );
@@ -841,7 +841,7 @@ class Test extends Component {
             return (
                 <Modal 
                     show={this.state.showErrorMessage}>
-                        <p>You are up to date!</p>
+                        <p>You have no words to test!</p>
                         <Button clicked={this.onClickAddWords}>Add Words</Button>
                 </Modal> 
             )

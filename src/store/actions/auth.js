@@ -1,4 +1,3 @@
-import { findAllByDisplayValue } from '@testing-library/react';
 import * as actionTypes from './actionTypes';
 
 export const authStart = () => {

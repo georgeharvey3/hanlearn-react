@@ -137,14 +137,23 @@ class AddWords extends Component {
 
     onTestHandler = () => {
         let anyDue = this.props.words.some(word => new Date(word.due_date) <= new Date());
+        let anyWords = this.props.words.length > 0;
 
         if (anyDue) {
             this.props.history.push('/test-words');
         } else {
-            this.setState({
-                showErrorMessage: true,
-                errorMessage: "You are up to date!" 
-            })
+            if (!anyWords) {
+                this.setState({
+                    showErrorMessage: true,
+                    errorMessage: "You don't have any words yet!" 
+                })
+            } else {
+                this.setState({
+                    showErrorMessage: true,
+                    errorMessage: "You are up to date!" 
+                });
+            }
+            
         }
     }
     
