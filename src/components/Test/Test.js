@@ -831,7 +831,7 @@ class Test extends Component {
                         </div>
                         <div style={{paddingTop: '30px', display: 'flex', justifyContent: 'center'}}>
                             <Button clicked={this.onIDontKnow} id="idk">I Don't Know</Button>
-                            <Button clicked={this,this.onSubmitAnswer}>Submit</Button>
+                            <Button clicked={this.onSubmitAnswer}>Submit</Button>
                         </div>
                     </div>
                 </Aux>
