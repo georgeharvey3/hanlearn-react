@@ -158,6 +158,8 @@ class Test extends Component {
         if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
             return;
         }
+        this.setState({idkDisabled: true});
+
         writer.animateCharacter({
             onComplete: () => {
                 let charGrid = document.getElementById('character-target-div');
@@ -200,10 +202,12 @@ class Test extends Component {
         if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
             return;
         }
+        this.setState({idkDisabled: true});
+
         writer.animateCharacter({
             onComplete: () => {
                 document.getElementById('character-target-div').innerHTML = "";
-                let writer = window.HanziWriter.create('character-target-div', char[1], {
+                let secondWriter = window.HanziWriter.create('character-target-div', char[1], {
                     width: 150,
                     height: 150,
                     padding: 20,
@@ -213,7 +217,7 @@ class Test extends Component {
                     showCharacter: false,
                     showHintAfterMisses: numBeforeHint
                 });
-                writer.animateCharacter({
+                secondWriter.animateCharacter({
                     onComplete: () => {
                         let charGrid = document.getElementById('character-target-div');
                         if (charGrid !== null) {
@@ -257,10 +261,12 @@ class Test extends Component {
         if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
             return;
         }
+        this.setState({idkDisabled: true});
+
         writer.animateCharacter({
             onComplete: () => {
                 document.getElementById('character-target-div').innerHTML = "";
-                let writer = window.HanziWriter.create('character-target-div', char[1], {
+                let secondWriter = window.HanziWriter.create('character-target-div', char[1], {
                     width: 150,
                     height: 150,
                     padding: 20,
@@ -270,10 +276,10 @@ class Test extends Component {
                     showCharacter: false,
                     showHintAfterMisses: numBeforeHint
                 });
-                writer.animateCharacter({
+                secondWriter.animateCharacter({
                     onComplete: () => {
                         document.getElementById('character-target-div').innerHTML = "";
-                        let writer = window.HanziWriter.create('character-target-div', char[2], {
+                        let thirdWriter = window.HanziWriter.create('character-target-div', char[2], {
                             width: 150,
                             height: 150,
                             padding: 20,
@@ -283,13 +289,12 @@ class Test extends Component {
                             showCharacter: false,
                             showHintAfterMisses: numBeforeHint
                         });
-                        writer.animateCharacter({
+                        thirdWriter.animateCharacter({
                             onComplete: () => {
                                 let charGrid = document.getElementById('character-target-div');
                                 if (charGrid !== null) {
                                     charGrid.innerHTML = "";
                                 }
-                                this.setState({idkDisabled: true});
                                 this.setState(prevState => {
                                     let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
                                     return {
