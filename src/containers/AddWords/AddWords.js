@@ -12,7 +12,6 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 
 
 class AddWords extends Component {
-
     constructor () {
         super();
 

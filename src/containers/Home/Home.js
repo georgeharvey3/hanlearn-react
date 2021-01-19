@@ -11,6 +11,8 @@ import Footer from '../../components/Home/Footer/Footer';
 import addCap from '../../assets/images/addwords_pic.png';
 import testCap from '../../assets/images/testwords_pic.png';
 
+import * as actions from '../../store/actions/index';
+
 class Home extends Component {
 
     onClickSignUp = () => {
@@ -19,6 +21,12 @@ class Home extends Component {
 
     onTryOutClicked = () => {
         this.props.history.push("/tryout");
+    }
+
+    componentDidMount = () => {
+        if (this.props.isAuthenticated) {
+            this.props.onInitWords(this.props.token);
+        }
     }
 
     render () {
@@ -46,9 +54,17 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        isAuthenticated: state.auth.token !== null
+        isAuthenticated: state.auth.token !== null,
+        token: state.auth.token
     }
 }
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onInitWords: (token) => dispatch(actions.initWords(token))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 

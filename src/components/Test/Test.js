@@ -149,7 +149,8 @@ class Test extends Component {
             question: initialVals.question,
             questionCategory: initialVals.questionCategory,
             chosenCharacter: initialVals.chosenCharacter,
-            initNumPerms: permList.length
+            initNumPerms: permList.length,
+            showErrorMessage: false
         });
 
     }

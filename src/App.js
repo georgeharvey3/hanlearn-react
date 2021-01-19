@@ -97,7 +97,6 @@ const mapDispatchToProps = dispatch => {
     onTryAutoLogin: () => dispatch(actions.authCheckState()),
     onSetSpeechAvailable: (available) => dispatch(actions.setSpeechAvailable(available)),
     onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available))
-
   }
 }
 
