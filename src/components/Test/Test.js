@@ -95,6 +95,27 @@ class Test extends Component {
         });
 
         this.onInitialiseTestSet(useHandwriting);
+
+        document.addEventListener('keypress', event => {
+            if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
+                
+                let sourceElement = event.target.tagName.toLowerCase();
+
+                if (event.key === " " && sourceElement !== "input") {
+                    this.onListenPinyin();
+                }
+
+            }
+        })
+
+        document.addEventListener('keyup', event => {
+            if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
+                
+                if (event.ctrlKey && event.key === "m") {
+                    this.onListenPinyin();
+                }
+            }
+        })
     }
 
     componentDidUpdate = (prevProps, prevState) => {

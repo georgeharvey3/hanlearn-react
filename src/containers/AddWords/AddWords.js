@@ -165,7 +165,7 @@ class AddWords extends Component {
             let tableRows = this.props.words.map((row, index) => {
                 return (
                     <tr key={index}>
-                        <td>{row.simp}</td>
+                        <td>{row[this.state.charSet]}</td>
                         <td>{row.pinyin}</td>
                         <td 
                             contentEditable='true' 
