@@ -75,3 +75,34 @@ export const deleteWord = (token, wordID) => {
         }));
     }
 }
+
+export const postUpdateMeaning = (token, wordID, newMeaning) => {
+    return dispatch => {
+        fetch('/api/update-word-meaning', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'x-access-token': token
+            },
+            body: JSON.stringify({word_id: wordID, new_meaning:  newMeaning})
+        }).then(response => {
+            if (response.status !== 201) {
+                console.log(`Problem. Status Code: ${response.status}`);
+                return;
+            }
+            console.log("Running");
+            dispatch(updateMeaning(wordID, newMeaning));
+        }
+        );
+
+    }
+}
+
+export const updateMeaning = (wordID, newMeaning) => {
+    return {
+        type: actionTypes.UPDATE_MEANING,
+        wordID: wordID,
+        newMeaning: newMeaning
+    }
+}

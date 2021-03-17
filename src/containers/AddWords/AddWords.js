@@ -108,30 +108,12 @@ class AddWords extends Component {
         }
 
         e.target.dataset.orig = newMeaning;
-        this.sendMeaningUpdate(wordID, newMeaning);
+        this.props.onPostMeaningUpdate(this.props.token, wordID, newMeaning)
         e.target.blur()
     }
 
     onBlurMeaning = (e) => {
         e.target.textContent = e.target.dataset.orig;
-    }
-
-    sendMeaningUpdate = (wordID, newMeaning) => {
-        fetch('/api/update-word-meaning', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'x-access-token': this.props.token
-            },
-            body: JSON.stringify({word_id: wordID, new_meaning:  newMeaning})
-        }).then(response => {
-            if (response.status !== 200) {
-                console.log(`Problem. Status Code: ${response.status}`);
-                return;
-            }
-        }
-        );
     }
 
     onTestHandler = () => {
@@ -258,7 +240,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onPostWord: (token, word) => dispatch(wordActions.postWord(token, word)),
         onDeleteWord: (token, word_id) => dispatch(wordActions.deleteWord(token, word_id)),
-        onInitWords: (token) => dispatch(wordActions.initWords(token))
+        onInitWords: (token) => dispatch(wordActions.initWords(token)),
+        onPostMeaningUpdate: (token, word, newMeaning) => dispatch(wordActions.postUpdateMeaning(token, word, newMeaning))
     }
 }
 

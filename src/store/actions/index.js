@@ -1,7 +1,8 @@
 export {
     initWords,
     postWord,
-    deleteWord
+    deleteWord,
+    postUpdateMeaning
 } from './word.js';
 export {
     auth,

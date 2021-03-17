@@ -33,6 +33,17 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 words: newWords
             }
+        case actionTypes.UPDATE_MEANING:
+            let newWordsMeaning = state.words.slice();
+            for (let i = 0; i < newWordsMeaning.length; i ++) {
+                if (newWordsMeaning[i].id === action.wordID) {
+                    newWordsMeaning[i].meaning = action.newMeaning
+                }
+            }
+            return {
+                ...state,
+                words: newWordsMeaning
+            }
         case actionTypes.CLEAR_WORDS:
             return {
                 ...state,
