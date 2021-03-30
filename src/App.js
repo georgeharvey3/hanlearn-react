@@ -33,10 +33,22 @@ class App extends Component {
         let utterThis = new SpeechSynthesisUtterance("");
         if (utterThis !== null) {
           const voices = this.getVoicesReal();
-          let chineseVoice;
+          let chineseVoicezhCN;
+          let chineseVoicezh;
+
           voices.then(voices => {
-            chineseVoice = voices.filter(voice => voice.lang.indexOf('zh-CN') === 0)[0];
-            if (chineseVoice) {
+            chineseVoicezhCN = voices.filter(voice => voice.lang.indexOf('zh-CN') === 0)[0];
+            chineseVoicezh = voices.filter(voice => voice.lang.indexOf('zh') === 0)[0];
+            if (chineseVoicezhCN || chineseVoicezh) {
+              let voice;
+
+              if (chineseVoicezhCN) {
+                voice = "zh-CN";
+              } else {
+                voice = "zh";
+              }
+
+              this.props.onSetVoice(voice);
               this.props.onSetSynthAvailable(true);
             } else {
               this.props.onSetSynthAvailable(false);
@@ -96,7 +108,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onTryAutoLogin: () => dispatch(actions.authCheckState()),
     onSetSpeechAvailable: (available) => dispatch(actions.setSpeechAvailable(available)),
-    onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available))
+    onSetSynthAvailable: (available) => dispatch(actions.setSynthAvailable(available)),
+    onSetVoice: (voice) => dispatch(actions.setVoice(voice))
   }
 }
 

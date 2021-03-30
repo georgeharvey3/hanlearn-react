@@ -1,0 +1,48 @@
+.SentenceStage {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 30px 0;
+    color: #E6E0AE;
+}
+
+.SentenceStage p {
+    font-size: 1.1em;
+}
+
+.SentenceStage h2 {
+    font-weight: 300;
+    font-size: 1.5em;
+}
+
+.SentenceStage h3 {
+    font-weight: 300;
+    font-size: 1.5em;
+    margin: 5px auto;
+}
+
+.SentenceStage input {
+    border-radius: 25px;
+    width: 80%;
+    max-width: 300px;
+    height: 36px;
+    border: none;
+    box-shadow: 0 1px 4px black;
+    text-align: center;
+    margin: 5px auto 0px auto;
+    font-size: 16px;
+}
+
+.QuestionCard {
+    width: 70%;
+    background-color: #E6E0AE;
+    box-shadow: 0 1px 4px black;
+    color: #AA381E;
+    border-radius: 5px;
+    min-height: 100px;
+    margin: 0 auto 10px auto;
+    padding: 20px 5px;
+    font-size: 1.6em;
+}
+

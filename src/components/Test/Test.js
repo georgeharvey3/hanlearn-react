@@ -106,16 +106,19 @@ class Test extends Component {
                 }
 
             }
-        })
+        });
 
         document.addEventListener('keyup', event => {
+            if (event.ctrlKey && event.key === "i") {
+                this.onIDontKnow();
+            }
             if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
                 
                 if (event.ctrlKey && event.key === "m") {
                     this.onListenPinyin();
                 }
             }
-        })
+        });
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -624,7 +627,7 @@ class Test extends Component {
     onSpeakPinyin = (word) => {
         let synth = window.speechSynthesis;
         let utterThis = new SpeechSynthesisUtterance(word);
-        utterThis.lang = 'zh-CN';
+        utterThis.lang = this.props.voice;
         synth.cancel();
         synth.speak(utterThis);
     }
@@ -844,6 +847,7 @@ class Test extends Component {
                         <TestSummary 
                             isTest={this.props.isTest} 
                             homeClicked={this.onHomeClicked} 
+                            continueClicked={() => this.props.startSentenceStage(this.state.testSet)}
                             scores={this.state.scoreList}/>
                     </Modal>
                     <div className={classes.Test}>
@@ -880,7 +884,8 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth.token,
         speechAvailable: state.settings.speechAvailable,
-        synthAvailable: state.settings.synthAvailable
+        synthAvailable: state.settings.synthAvailable,
+        voice: state.settings.voice
     }
 }
 

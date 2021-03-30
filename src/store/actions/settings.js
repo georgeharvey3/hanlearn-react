@@ -13,3 +13,10 @@ export const setSynthAvailable = available => {
         available: available
     }
 }
+
+export const setVoice = voice => {
+    return {
+        type: actionTypes.SET_VOICE,
+        voice: voice
+    }
+}

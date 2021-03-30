@@ -5,8 +5,14 @@ import * as wordActions from '../../store/actions/index';
 import Modal from '../../components/UI/Modal/Modal';
 import Button from '../../components/UI/Buttons/Button/Button';
 import Test from '../../components/Test/Test';
+import SentenceStage from '../../components/Test/SentenceStage/SentenceStage';
 
 class TestWords extends Component {
+    state = {
+        isSentenceStage: false,
+        sentenceWords: []
+    }
+
     componentDidMount () {
         if (!this.props.isTest) {
             this.props.onInitWords(this.props.token);
@@ -15,6 +21,13 @@ class TestWords extends Component {
 
     onClickAddWords = () => {
         this.props.history.push("/add-words");
+    }
+
+    onStartSentenceStage = (sentenceWords) => {
+        this.setState({
+            isSentenceStage: true,
+            sentenceWords: sentenceWords
+        });
     }
 
     render () {
@@ -31,8 +44,16 @@ class TestWords extends Component {
             return test;
         }
 
+        
+
         if (this.props.words.length > 0) {
-            test = <Test words={this.props.words}/>
+            if (!this.state.isSentenceStage) {
+                test = <Test 
+                            words={this.props.words} 
+                            startSentenceStage={(sentenceWords) => this.onStartSentenceStage(sentenceWords)}/>
+            } else {
+                test = <SentenceStage words={this.state.sentenceWords} />
+            }
         } else {
             test = <Modal 
                     show>

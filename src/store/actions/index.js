@@ -12,5 +12,6 @@ export {
 } from './auth';
 export {
     setSpeechAvailable,
-    setSynthAvailable
+    setSynthAvailable,
+    setVoice
 } from './settings';

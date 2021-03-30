@@ -36,6 +36,7 @@ class TestSummary extends Component {
                 <Table headings={['Word', 'Score']}>
                     {scoreRows}
                 </Table>
+                <Button clicked={this.props.continueClicked}>Continue</Button>
                 {buttons}
             </Aux>
         );

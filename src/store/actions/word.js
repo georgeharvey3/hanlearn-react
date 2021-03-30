@@ -91,7 +91,6 @@ export const postUpdateMeaning = (token, wordID, newMeaning) => {
                 console.log(`Problem. Status Code: ${response.status}`);
                 return;
             }
-            console.log("Running");
             dispatch(updateMeaning(wordID, newMeaning));
         }
         );

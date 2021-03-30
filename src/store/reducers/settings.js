@@ -17,6 +17,11 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 synthAvailable: action.available
             }
+        case actionTypes.SET_VOICE:
+            return {
+                ...state,
+                voice: action.voice
+            }
         default:
             return state;
     }
