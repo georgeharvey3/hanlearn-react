@@ -6,7 +6,8 @@
     left: 0;
     top: 0;
     z-index: 200;
-    background-color: rgb(82, 129, 122);
+    background-color: rgb(46, 66, 66);
+    border-right: 3px solid #E6E0AE;
     padding: 32px 16px;
     box-sizing: border-box;
     transition: transform .3s ease-out;
@@ -27,9 +28,9 @@
 }
 
 .Logo {
-    height: 20%;
-    width: 100%;
-    margin-bottom: 20px;
+    height: 100px;
+    width: 100px;
+    margin: 0 auto 20px auto;
     background-color: #AA381E;
-    border-radius: 50%;
+    border-radius: 5px;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import classes from './Toolbar.module.css';
 
@@ -10,7 +11,7 @@ const toolbar = props => (
     <header className={classes.Toolbar}>
         <DrawerToggle clicked={props.drawerToggleClicked}/>
         <h2 className={classes.PhoneOnly}>HanLearn</h2>
-        <div className={[classes.Logo, classes.DesktopOnly].join(' ')}>    
+        <div className={[classes.Logo, classes.DesktopOnly].join(' ')} onClick={() => props.history.push("/")}>    
             <Logo colour='red'/>
             <h3 className={classes.DesktopOnly}>HanLearn</h3>
         </div>
@@ -20,4 +21,4 @@ const toolbar = props => (
     </header>
 );
 
-export default toolbar;
+export default withRouter(toolbar);

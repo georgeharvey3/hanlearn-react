@@ -4,7 +4,7 @@ import classes from './Table.module.css';
 
 const table = props => {
     let headings = props.headings.map(heading => {
-        if (heading === 'Due Date') {
+        if (heading === 'Due Date (D/M/Y)') {
             return (
                 <th className="Disappear" key={heading}>{heading}</th>
             );

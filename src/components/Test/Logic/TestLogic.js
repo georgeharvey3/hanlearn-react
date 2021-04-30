@@ -21,7 +21,8 @@ export const setPermList = function (testSet, includeHandwriting) {
     let qaCombinations;
 
     if (includeHandwriting) {
-        qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC']
+        qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC'];
+        //qaCombinations = ['CP', 'CM'];
     } else {
         qaCombinations = ['PC', 'PM', 'MP', 'MC'];
     }
@@ -92,7 +93,6 @@ export const toneChecker = function (inp, answer) {
     } else {
         return 'Try again';
     }
-
 }
 
 export const Counter = (array) => {
@@ -100,100 +100,3 @@ export const Counter = (array) => {
     array.forEach(val => count[val] = (count[val] || 0) + 1);
     return count;
 }
-
-/*
-
-
-
-const testInput = function (inp, answer, answerCategory) {
-    if (answerCategory == 'pinyin' && inp.replace(' ', '').toLowerCase() == answer.replace(' ', '') ||
-                answerCategory == 'meaning' && answer.includes(inp.toLowerCase())) {
-        let result = 'Correct!';
-        let permIndex = permList.indexOf(perm);
-        if (permIndex !== -1) permList.splice(permIndex, 1);
-        move();
-        if (permList.length !== 0) {
-            assignQA()
-        } else {
-            finishTest();
-        }
-    } else if (ACs == 'pinyin') {
-        toneChecker(inp.toLowerCase());
-    } else {
-        result = 'Try Again'
-    }
-}
-
-
-
-
-const displayQA = function () {
-    resultDisplay.textContent = '';
-
-    if (QCs == 'meaning') {
-        Qx = Qx.join('/\n');
-    }
-    questionChar.textContent = Qx;
-
-    questionPhrase.textContent = ACs;
-
-    idkButton.disabled = false;
-}
-
-
-const processInput = function (e) {
-    if (e.keyCode !== 13) {
-        return
-    }
-    inp = entry.value;
-
-    entry.value = '';
-
-    testInput(inp);
-
-    resultDisplay.textContent = result;
-
-    if (result == 'Correct!') {
-        setTimeout(displayQA, 1000);
-    }
-}
-
-const idk = function () {
-    entry.value = '';
-
-    if (ACs == 'meaning') {
-        Ax = Ax.join('/ ');
-    }
-    resultDisplay.textContent = `Answer was '${Ax}'.`;
-
-    idkButton.disabled = true;
-
-    let toCheck = testThese[perm.index][charSet] + perm.qCategory + perm.aCategory;
-    if (!idkChecker.includes(toCheck)){
-        idkChecker.push(toCheck);
-        idkList.push(toCheck.slice(0, -2));
-    }
-    localStorage.setItem('idkList', idkList)
-
-    assignQA();
-
-    setTimeout(displayQA, 2000);
-}
-
-const removeWord = function () {
-    removedWord = testThese[perm.index];
-
-    testThese.splice(perm.index, 1);
-    permList.splice(-4)
-
-    if (permList) {
-        assignQA();
-        displayQA();
-    } else {
-        finishTest();
-    }
-
-    sendRemove(removedWord.id);
-}
-
-*/

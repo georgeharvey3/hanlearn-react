@@ -66,7 +66,12 @@ class Test extends Component {
             useHandwriting: true,
             useSpeechRecognition: true,
             showErrorMessage: false,
-            redoChar: false
+            redoChar: false,
+            sentenceWords: [],
+            writer: null,
+            qNum: 0,
+            recognition: null,
+            showPinyin: false
         }    
 
     }
@@ -78,14 +83,14 @@ class Test extends Component {
 
         if (this.props.isTest) {
             if (this.props.speechAvailable) {
-                useSpeechRecognition = false;
+                useSpeechRecognition = true;
             }
 
             if (this.props.synthAvailable) {
-                useSound = false;
+                useSound = true;
             }
 
-            useHandwriting = true;
+            useHandwriting = false;
         }
 
         this.setState({
@@ -96,50 +101,49 @@ class Test extends Component {
 
         this.onInitialiseTestSet(useHandwriting);
 
-        document.addEventListener('keypress', event => {
-            if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
-                
-                let sourceElement = event.target.tagName.toLowerCase();
+        document.addEventListener('keyup', this.onKeyUp);
+    }
+    componentWillUnmount = () => {
+        document.removeEventListener('keypress', this.onKeyPress);
 
-                if (event.key === " " && sourceElement !== "input") {
-                    this.onListenPinyin();
-                }
-
-            }
-        });
-
-        document.addEventListener('keyup', event => {
-            if (event.ctrlKey && event.key === "i") {
-                this.onIDontKnow();
-            }
-            if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
-                
-                if (event.ctrlKey && event.key === "m") {
-                    this.onListenPinyin();
-                }
-            }
-        });
+        document.removeEventListener('keyup', this.onKeyUp);
     }
 
     componentDidUpdate = (prevProps, prevState) => {
 
-        if (prevState.perm !== this.state.perm || this.state.redoChar) {
+        if (prevState.qNum !== this.state.qNum) {
             if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
                 this.onSpeakPinyin(this.state.chosenCharacter);
             }
             if (this.state.answerCategory === 'character') {
-                /*
-                for (let i = 0; i < this.state.answer.length; i ++) {
-                    this.onNewCharacter(this.state.answer[i], i);
-                }
-                */
-                if (this.state.answer.length === 1) {
-                    this.onNewCharacterOne(this.state.answer);
-                } else if (this.state.answer.length === 2) {
-                    this.onNewCharacterTwo(this.state.answer);
-                } else if (this.state.answer.length === 3) {
-                    this.onNewCharacterThree(this.state.answer);
-                }
+                this.setHanziWriter(this.state.answer);
+            }            
+        }
+    }
+
+    onKeyUp = (event) => {
+        if (event.ctrlKey && event.key === "i") {
+            this.onIDontKnow();
+        }
+        if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
+
+            let sourceElement = event.target.tagName.toLowerCase();
+
+            if (event.key === " " && sourceElement !== "input") {
+                this.onListenPinyin();
+            }
+            
+            if (event.ctrlKey && event.key === "m") {
+                this.onListenPinyin();
+            }
+        }
+
+        if (this.state.questionCategory === "pinyin" && this.state.useSound) {
+            
+            let sourceElement = event.target.tagName.toLowerCase();
+
+            if (event.key === " " && sourceElement !== "input") {
+                this.onSpeakPinyin(this.state.chosenCharacter);
             }
         }
     }
@@ -164,107 +168,135 @@ class Test extends Component {
         
         let permList = testLogic.setPermList(selectedWords, useHandwriting);
         let initialVals = testLogic.assignQA(selectedWords, permList, this.state.charSet);
+        this.setState(prevState => {
+            return {
+                testSet: selectedWords,
+                permList: permList,
+                perm: initialVals.perm,
+                answer: initialVals.answer,
+                answerCategory: initialVals.answerCategory,
+                question: initialVals.question,
+                questionCategory: initialVals.questionCategory,
+                chosenCharacter: initialVals.chosenCharacter,
+                initNumPerms: permList.length,
+                showErrorMessage: false,
+                qNum: prevState.qNum + 1
+            }
+        });
+
+    }
+
+    setHanziWriter = (char) => {
+        let index = 0;
+
+        let flashChar = !this.state.drawnCharacters.includes(char);
+
+        let numBeforeHint = 100;
+
+        if (this.props.isTest) {
+            numBeforeHint = 1;
+        }
+
+        try {
+            document.getElementById('character-target-div').innerHTML = "";
+        } catch (e) {}
+        
+        let writer = window.HanziWriter.create("character-target-div", char[index], {
+            width: 150,
+            height: 150,
+            padding: 20,
+            showOutline: false,
+            showCharacter: flashChar,
+            showHintAfterMisses: numBeforeHint,
+            delayBetweenStrokes: 10,
+            strokeAnimationSpeed: 1,
+        });
+
         this.setState({
-            testSet: selectedWords,
-            permList: permList,
-            perm: initialVals.perm,
-            answer: initialVals.answer,
-            answerCategory: initialVals.answerCategory,
-            question: initialVals.question,
-            questionCategory: initialVals.questionCategory,
-            chosenCharacter: initialVals.chosenCharacter,
-            initNumPerms: permList.length,
-            showErrorMessage: false
-        });
+            writer: writer
+        })
 
+        this.quizWriter(writer, char, index);
     }
 
-    onidkCharOne = (writer, char, numBeforeHint) => {
-        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
-            return;
-        }
-        this.setState({idkDisabled: true});
+    updateHanziWriterQuiz = (writer, char, index) => {
+        writer.setCharacter(char[index]);
 
-        writer.animateCharacter({
+        this.quizWriter(writer, char, index);
+    }
+
+    quizWriter = (writer, char, index) => {
+        writer.quiz({
             onComplete: () => {
-                let charGrid = document.getElementById('character-target-div');
-                if (charGrid !== null) {
-                    charGrid.innerHTML = "";
+                index ++;
+                if (index < char.length) {
+                    setTimeout(function() {
+                        this.updateHanziWriterQuiz(writer, char, index)
+                    }.bind(this), 1000)
+                } else {
+                    this.setState(prevState => {
+                        return {
+                            drawnCharacters: prevState.drawnCharacters.concat(char)
+                        }
+                    });
+                    setTimeout(function() {
+                        try {
+                            document.getElementById("character-target-div").innerHTML = "";
+                        } catch (e) {
+                            
+                        }
+                        this.onCorrectAnswer();
+                    }.bind(this), 1000)
                 }
-                this.setState({idkDisabled: true});
-                this.setState(prevState => {
-                    let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
-                    return {
-                        idkList: prevState.idkList.concat(idkChar)
-                    }
-                });
-
-                let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
-
-                let redoChar = false;
-
-                if (newQuestion.perm === this.state.perm) {
-                    redoChar = true;
-                }
-                
-                this.setState({
-                    perm: newQuestion.perm,
-                    answer: newQuestion.answer,
-                    answerCategory: newQuestion.answerCategory,
-                    question: newQuestion.question,
-                    questionCategory: newQuestion.questionCategory,
-                    chosenCharacter: newQuestion.chosenCharacter,
-                    idkDisabled: false,
-                    result: '',
-                    answerInput: '',
-                    redoChar: redoChar
-                        });
-                }
+            }
         });
     }
 
-    onidkCharTwo = (writer, char, numBeforeHint) => {
-        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
-            return;
-        }
-        this.setState({idkDisabled: true});
+    onIdkChar = (writer, char) => {
+        this.setState({
+            idkDisabled: true
+        });
+        writer.cancelQuiz();
+        let index = 0;
+        writer.setCharacter(char[index]);
+        this.animateWriter(writer, char, index)
+    }
 
+    updateHanziWriterAnimate = (writer, char, index) => {
+        writer.setCharacter(char[index]);
+
+        this.animateWriter(writer, char, index);
+    }
+
+    animateWriter = (writer, char, index) => {
         writer.animateCharacter({
             onComplete: () => {
-                document.getElementById('character-target-div').innerHTML = "";
-                let secondWriter = window.HanziWriter.create('character-target-div', char[1], {
-                    width: 150,
-                    height: 150,
-                    padding: 20,
-                    delayBetweenStrokes: 10,
-                    strokeAnimationSpeed: 1,
-                    showOutline: false,
-                    showCharacter: false,
-                    showHintAfterMisses: numBeforeHint
-                });
-                secondWriter.animateCharacter({
-                    onComplete: () => {
-                        let charGrid = document.getElementById('character-target-div');
-                        if (charGrid !== null) {
-                            charGrid.innerHTML = "";
-                        }
-                        this.setState({idkDisabled: true});
-                        this.setState(prevState => {
-                            let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
-                            return {
-                                idkList: prevState.idkList.concat(idkChar)
-                            }
-                        });
-
-                        let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
-
-                        let redoChar = false;
-
-                        if (newQuestion.perm === this.state.perm) {
-                            redoChar = true;
-                        }
+                index ++;
+                if (index < char.length) {
+                    this.updateHanziWriterAnimate(writer, char, index)
+                } else {
+                    try {
+                        document.getElementById("character-target-div").innerHTML = "";
+                    } catch (e) {
                         
-                        this.setState({
+                    }
+                    this.setState(prevState => {
+                        let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
+                        return {
+                            idkList: prevState.idkList.concat(idkChar)
+                        }
+                    });
+
+                    let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
+
+                    let redoChar = false;
+
+                    if (newQuestion.perm === this.state.perm) {
+                        redoChar = true;
+                    }
+                    
+                    this.setState(prevState => {
+                        return {
                             perm: newQuestion.perm,
                             answer: newQuestion.answer,
                             answerCategory: newQuestion.answerCategory,
@@ -274,253 +306,12 @@ class Test extends Component {
                             idkDisabled: false,
                             result: '',
                             answerInput: '',
-                            redoChar: redoChar
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    onidkCharThree = (writer, char, numBeforeHint) => {
-        if (!this.state.useHandwriting || !(this.state.answerCategory === 'character') ) {
-            return;
-        }
-        this.setState({idkDisabled: true});
-
-        writer.animateCharacter({
-            onComplete: () => {
-                document.getElementById('character-target-div').innerHTML = "";
-                let secondWriter = window.HanziWriter.create('character-target-div', char[1], {
-                    width: 150,
-                    height: 150,
-                    padding: 20,
-                    delayBetweenStrokes: 10,
-                    strokeAnimationSpeed: 1,
-                    showOutline: false,
-                    showCharacter: false,
-                    showHintAfterMisses: numBeforeHint
-                });
-                secondWriter.animateCharacter({
-                    onComplete: () => {
-                        document.getElementById('character-target-div').innerHTML = "";
-                        let thirdWriter = window.HanziWriter.create('character-target-div', char[2], {
-                            width: 150,
-                            height: 150,
-                            padding: 20,
-                            delayBetweenStrokes: 10,
-                            strokeAnimationSpeed: 1,
-                            showOutline: false,
-                            showCharacter: false,
-                            showHintAfterMisses: numBeforeHint
-                        });
-                        thirdWriter.animateCharacter({
-                            onComplete: () => {
-                                let charGrid = document.getElementById('character-target-div');
-                                if (charGrid !== null) {
-                                    charGrid.innerHTML = "";
-                                }
-                                this.setState(prevState => {
-                                    let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
-                                    return {
-                                        idkList: prevState.idkList.concat(idkChar)
-                                    }
-                                });
-
-                                let newQuestion = testLogic.assignQA(this.state.testSet, this.state.permList, this.state.charSet);
-
-                                let redoChar = false;
-
-                                if (newQuestion.perm === this.state.perm) {
-                                    redoChar = true;
-                                }
-                                
-                                this.setState({
-                                    perm: newQuestion.perm,
-                                    answer: newQuestion.answer,
-                                    answerCategory: newQuestion.answerCategory,
-                                    question: newQuestion.question,
-                                    questionCategory: newQuestion.questionCategory,
-                                    chosenCharacter: newQuestion.chosenCharacter,
-                                    idkDisabled: false,
-                                    result: '',
-                                    answerInput: '',
-                                    redoChar: redoChar
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    onNewCharacterOne = (char) => {
-        document.getElementById('character-target-div').innerHTML = "";
-        let flashChar = !this.state.drawnCharacters.includes(char);
-
-        let numBeforeHint = 100;
-        if (this.props.isTest) {
-            numBeforeHint = 1;
-        }
-
-        let writer = window.HanziWriter.create('character-target-div', char, {
-            width: 150,
-            height: 150,
-            padding: 20,
-            delayBetweenStrokes: 300,
-            showOutline: false,
-            showCharacter: flashChar,
-            showHintAfterMisses: 100
-        });
-
-        let idkButton = document.getElementById('idk');
-        let idkCharNoParams = () => {
-            this.onidkCharOne(writer, char, numBeforeHint);
-        }
-        idkButton.addEventListener('click', function executeIdk() {
-            idkCharNoParams();
-            idkButton.removeEventListener('click', executeIdk, false);
-        });
-
-        writer.quiz({
-            onComplete: () => {
-                this.setState(prevState => {
-                    return {
-                        drawnCharacters: prevState.drawnCharacters.concat(char)
-                    }
-                });
-                document.getElementById('character-target-div').innerHTML = "";
-                this.onCorrectAnswer();
-            }
-        });
-    }
-
-    onNewCharacterTwo = (char) => {
-        let charGrid = document.getElementById('character-target-div');
-        if (charGrid !== null) {
-            charGrid.innerHTML = "";
-        }        let flashChar = !this.state.drawnCharacters.includes(char);
-
-        let numBeforeHint = 100;
-        if (this.props.isTest) {
-            numBeforeHint = 1;
-        }
-
-        let writer = window.HanziWriter.create('character-target-div', char[0], {
-            width: 150,
-            height: 150,
-            padding: 20,
-            delayBetweenStrokes: 10,
-            strokeAnimationSpeed: 1,
-            showOutline: false,
-            showCharacter: flashChar,
-            showHintAfterMisses: numBeforeHint
-        });
-        
-        let idkButton = document.getElementById('idk');
-        let idkCharNoParams = () => {
-            this.onidkCharTwo(writer, char, numBeforeHint);
-        }
-        idkButton.addEventListener('click', function executeIdk() {
-            idkCharNoParams();
-            idkButton.removeEventListener('click', executeIdk, false);
-        });
-        
-        writer.quiz({
-            onComplete: () => {
-                document.getElementById('character-target-div').innerHTML = "";
-                let writer = window.HanziWriter.create('character-target-div', char[1], {
-                    width: 150,
-                    height: 150,
-                    padding: 20,
-                    delayBetweenStrokes: 300,
-                    showOutline: false,
-                    showCharacter: flashChar,
-                    showHintAfterMisses: numBeforeHint
-                });
-                writer.quiz({
-                    onComplete: () => {
-                        this.setState(prevState => {
-                            return {
-                                drawnCharacters: prevState.drawnCharacters.concat(char)
-                            }
-                        });
-                        document.getElementById('character-target-div').innerHTML = "";
-                        this.onCorrectAnswer();
-                    }
-                });
-            }
-        });
-    }
-
-    onNewCharacterThree = (char) => {
-        document.getElementById('character-target-div').innerHTML = "";
-        let flashChar = !this.state.drawnCharacters.includes(char);
-
-        let numBeforeHint = 100;
-        if (this.props.isTest) {
-            numBeforeHint = 1;
-        }
-
-        let writer = window.HanziWriter.create('character-target-div', char[0], {
-            width: 150,
-            height: 150,
-            padding: 20,
-            delayBetweenStrokes: 300,
-            showOutline: false,
-            showCharacter: flashChar,
-            showHintAfterMisses: 100
-        });
-
-        let idkButton = document.getElementById('idk');
-        let idkCharNoParams = () => {
-            this.onidkCharThree(writer, char, numBeforeHint);
-        }
-        idkButton.addEventListener('click', function executeIdk() {
-            idkCharNoParams();
-            idkButton.removeEventListener('click', executeIdk, false);
-        });
-
-        writer.quiz({
-            onComplete: () => {
-                document.getElementById('character-target-div').innerHTML = "";
-                let writer = window.HanziWriter.create('character-target-div', char[1], {
-                    width: 150,
-                    height: 150,
-                    padding: 20,
-                    delayBetweenStrokes: 300,
-                    showOutline: false,
-                    showCharacter: flashChar,
-                    showHintAfterMisses: 100
-                });
-                writer.quiz({
-                    onComplete: () => {
-                        document.getElementById('character-target-div').innerHTML = "";
-                        let writer = window.HanziWriter.create('character-target-div', char[2], {
-                            width: 150,
-                            height: 150,
-                            padding: 20,
-                            delayBetweenStrokes: 300,
-                            showOutline: false,
-                            showCharacter: flashChar,
-                            showHintAfterMisses: 100
-                        });
-                        writer.quiz({
-                            onComplete: () => {
-                                this.setState(prevState => {
-                                    return {
-                                        drawnCharacters: prevState.drawnCharacters.concat(char)
-                                    }
-                                });
-                                document.getElementById('character-target-div').innerHTML = "";
-                                this.onCorrectAnswer();
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                            redoChar: redoChar,
+                            qNum: prevState.qNum + 1
+                        }
+                    });
+                }
+        }});
     }
 
     onKeyPress = (e) => {
@@ -555,18 +346,21 @@ class Test extends Component {
             let newQuestion = testLogic.assignQA(this.state.testSet, newPermList, this.state.charSet);
             setTimeout(
                 function() {
-                    this.setState({
-                        perm: newQuestion.perm,
-                        answer: newQuestion.answer,
-                        answerCategory: newQuestion.answerCategory,
-                        question: newQuestion.question,
-                        questionCategory: newQuestion.questionCategory,
-                        chosenCharacter: newQuestion.chosenCharacter,
-                        result: '',
-                        answerInput: '',
-                        showInput: false,
-                        numSpeakTries: 0
-                    });
+                    this.setState(prevState => {
+                        return {
+                            perm: newQuestion.perm,
+                            answer: newQuestion.answer,
+                            answerCategory: newQuestion.answerCategory,
+                            question: newQuestion.question,
+                            questionCategory: newQuestion.questionCategory,
+                            chosenCharacter: newQuestion.chosenCharacter,
+                            result: '',
+                            answerInput: '',
+                            showInput: false,
+                            numSpeakTries: 0,
+                            qNum: prevState.qNum + 1
+                        }
+                });
                 }
                 .bind(this),
                 1000
@@ -585,6 +379,9 @@ class Test extends Component {
             this.onCorrectAnswer();
         /* eslint-enable */
         } else if (this.state.answerCategory === 'pinyin') {
+            if (this.state.useSound) {
+                fail.play();
+            }
             let resultString = testLogic.toneChecker(this.state.answerInput.toLowerCase(), this.state.answer);
             this.setState({result: resultString});
         } else {
@@ -592,6 +389,10 @@ class Test extends Component {
                 fail.play();
             }
             this.setState({result: 'Try Again'});
+        }
+
+        if (this.state.recognition !== null) {
+            this.state.recognition.abort();
         }
     }
 
@@ -604,6 +405,29 @@ class Test extends Component {
             this.onCorrectAnswer();
         } else if (asPinyin.join(' ') === this.state.answer) {
             this.onCorrectAnswer();
+        } else if (asPinyin.join(' ').replace(/[0-9]/g, '') === this.state.answer.replace(/[0-9]/g, '')) {
+            if (this.state.useSound) {
+                fail.play();
+            }
+            
+            let sentence = "Try different tones...";
+                if (this.state.chosenCharacter.length === 1) {
+                    sentence = "Try a different tone...";
+                }
+
+            if (this.state.numSpeakTries > -1) {
+                this.setState({
+                    result: `We heard: '${asPinyin.join(' ')}', which is wrong. ` + sentence,
+                    showInput: true
+                });
+            } else {
+                this.setState(prevState => {
+                    return {
+                        result: `We heard: '${asPinyin.join(' ')}', which is wrong. ` + sentence,
+                        numSpeakTries: prevState.numSpeakTries + 1
+                    }
+                });
+            }
         } else {
             if (this.state.useSound) {
                 fail.play();
@@ -628,17 +452,43 @@ class Test extends Component {
         let synth = window.speechSynthesis;
         let utterThis = new SpeechSynthesisUtterance(word);
         utterThis.lang = this.props.voice;
+        utterThis.onerror = (e) => {
+            if (e.error === "synthesis-failed") {
+                this.setState({
+                    result: "Error playing pinyin",
+                    showPinyin: true
+                });
+            }
+        }
         synth.cancel();
         synth.speak(utterThis);
     }
 
     onListenPinyin = () => {
+        if (this.state.recognition !== null) {
+            this.state.recognition.abort();
+        }
+
         let recognition = new window.webkitSpeechRecognition();
         recognition.lang = 'zh-CN';
+        this.setState({
+            recognition: recognition
+        })
+        let result;
 
         recognition.addEventListener('result', event => {
-            let result = event.results[0][0].transcript;
+            result = event.results[0][0].transcript;
             this.submitSpeech(result);
+        });
+
+        recognition.addEventListener('end', event => {
+            if (!result) {
+                this.setState({
+                    result: "Couldn't hear anything...",
+                    showInput: true
+                });
+                
+            }
         });
         this.setState({result: "Listening..."})
         recognition.start();
@@ -648,8 +498,8 @@ class Test extends Component {
     onIDontKnow = () => {
         
         let charDivExists = this.state.answerCategory === 'character' && this.state.useHandwriting;
-        
         if (charDivExists) {
+            this.onIdkChar(this.state.writer, this.state.answer);
             return;
         }
         
@@ -665,7 +515,7 @@ class Test extends Component {
 
         let displayAnswer = this.state.answer;
         if (this.state.answerCategory === 'meaning') {
-            displayAnswer = displayAnswer.join('/');
+            displayAnswer = displayAnswer.join(' / ');
         }
         this.setState({result: `Answer was '${displayAnswer}'`});
 
@@ -674,16 +524,20 @@ class Test extends Component {
         
         setTimeout(
             function() {
-                this.setState({
-                    perm: newQuestion.perm,
-                    answer: newQuestion.answer,
-                    answerCategory: newQuestion.answerCategory,
-                    question: newQuestion.question,
-                    questionCategory: newQuestion.questionCategory,
-                    chosenCharacter: newQuestion.chosenCharacter,
-                    idkDisabled: false,
-                    result: '',
-                    answerInput: ''
+                this.setState(prevState => {
+                    return {
+                        perm: newQuestion.perm,
+                        answer: newQuestion.answer,
+                        answerCategory: newQuestion.answerCategory,
+                        question: newQuestion.question,
+                        questionCategory: newQuestion.questionCategory,
+                        chosenCharacter: newQuestion.chosenCharacter,
+                        idkDisabled: false,
+                        result: '',
+                        answerInput: '',
+                        qNum: prevState.qNum + 1,
+                        showInput: false
+                    }
                 });
             }
             .bind(this),
@@ -696,6 +550,7 @@ class Test extends Component {
         let idkCounts = testLogic.Counter(this.state.idkList);
         let wordScores = [];
         let sendScores = [];
+        let sentenceWords = [];
         this.state.testSet.forEach(word => {
             let count = idkCounts[word[this.state.charSet]] || 0;
             if (count > 4) {
@@ -709,6 +564,9 @@ class Test extends Component {
                 3: "Weak",
                 4: "Very Weak"
             }
+            if (count === 0 && word.bank === 1)  {
+                sentenceWords.push(word);
+            }
 
             wordScores.push({
                 char: word[this.state.charSet],
@@ -718,7 +576,7 @@ class Test extends Component {
             sendScores.push({
                 word_id: word.id,
                 score: 4-count
-            }); 
+            });
         });
 
         if (!this.props.isTest) {
@@ -727,7 +585,8 @@ class Test extends Component {
 
         this.setState({
             testFinished: true,
-            scoreList: wordScores
+            scoreList: wordScores,
+            sentenceWords: sentenceWords
         });
     }
 
@@ -781,7 +640,10 @@ class Test extends Component {
                             value={this.state.answerInput}
                             changed={this.onInputChanged}
                             focussed={this.onFocusEntry}
-                            autoFocus={true}/>
+                            autoFocus={true}
+                            autoComplete="off"
+                            autoCorrect="off"
+                            spellCheck={false}/>
 
         let characterTest = <div 
             id="character-target-div" 
@@ -807,7 +669,10 @@ class Test extends Component {
                         value={this.state.answerInput}
                         changed={this.onInputChanged}
                         placeholder="Type pinyin..."
-                        autoFocus={true}/>
+                        autoFocus={true}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}/>
                     ) : null}
                 </div>
             );
@@ -819,11 +684,11 @@ class Test extends Component {
 
         let displayQ = this.state.question;
         if (this.state.questionCategory === 'meaning') {
-            displayQ = displayQ.join('/')
+            displayQ = displayQ.join(' / ')
         }
         let onQuestionCard = <h2>{displayQ}</h2>;
 
-        if (this.state.questionCategory === 'pinyin' && this.state.useSound) {
+        if (this.state.questionCategory === 'pinyin' && this.state.useSound && !this.state.showPinyin) {
             onQuestionCard = (
                 <PictureButton
                     colour="grey" 
@@ -835,7 +700,10 @@ class Test extends Component {
 
         if (this.state.testSet.length !== 0 || this.props.isTest) {
             let verb = this.state.answerCategory === 'character' ? 'Draw the ' : 'Enter the ';
+
+
             return (
+                
                 <Aux>
                     <Backdrop show={this.state.testFinished} />
                     <Modal 
@@ -846,8 +714,9 @@ class Test extends Component {
                         }}>
                         <TestSummary 
                             isTest={this.props.isTest} 
-                            homeClicked={this.onHomeClicked} 
-                            continueClicked={() => this.props.startSentenceStage(this.state.testSet)}
+                            homeClicked={this.onHomeClicked}
+                            continueAvailable={this.state.sentenceWords.length > 0 || this.props.isTest} 
+                            continueClicked={() => this.props.startSentenceStage(this.state.sentenceWords)}
                             scores={this.state.scoreList}/>
                     </Modal>
                     <div className={classes.Test}>
@@ -861,8 +730,13 @@ class Test extends Component {
                             {answerFormat}
                         </div>
                         <div style={{paddingTop: '30px', display: 'flex', justifyContent: 'center'}}>
-                            <Button clicked={this.onIDontKnow} id="idk">I Don't Know</Button>
-                            <Button clicked={this.onSubmitAnswer}>Submit</Button>
+                            <Button 
+                                disabled={this.state.idkDisabled}
+                                clicked={this.onIDontKnow} 
+                                id="idk">I Don't Know</Button>
+                            <Button 
+                                disabled={this.state.idkDisabled || this.state.answerInput === ""}
+                                clicked={this.onSubmitAnswer}>Submit</Button>
                         </div>
                     </div>
                 </Aux>
@@ -872,7 +746,7 @@ class Test extends Component {
             return (
                 <Modal 
                     show={this.state.showErrorMessage}>
-                        <p>You have no words to test!</p>
+                        <p>You have no words due for testing!</p>
                         <Button clicked={this.onClickAddWords}>Add Words</Button>
                 </Modal> 
             )

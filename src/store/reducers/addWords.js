@@ -11,11 +11,15 @@ const reducer = (state=initialState, action) => {
         case actionTypes.ADD_WORD:
             let word = action.word;
             let today = new Date();
+            if (state.words.length > 9) {
+                today.setDate(today.getDate() + 1);
+            }
             let todayDay = today.getDate() >= 10 ? today.getDate().toString() : "0" + today.getDate().toString();
             let todayMonth = today.getMonth() >= 9 ? (today.getMonth() + 1).toString() : "0" + (today.getMonth() + 1).toString();
             let todayYear = today.getFullYear().toString();
             let todayString = todayYear + "/" + todayMonth + "/" + todayDay;
             word.due_date = todayString;
+            word.bank = 1;
 
             return {
                 ...state,

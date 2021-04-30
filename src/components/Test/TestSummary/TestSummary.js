@@ -4,8 +4,10 @@ import { withRouter } from 'react-router-dom';
 import Aux from '../../../hoc/Aux';
 import Table from '../../UI/Table/Table';
 import TableRow from '../../UI/Table/TableRow/TableRow';
-import Buttons from '../../UI/Buttons/Buttons';
 import Button from '../../UI/Buttons/Button/Button';
+import HomePic from '../../../assets/images/home.png';
+
+import classes from './TestSummary.module.css';
 
 class TestSummary extends Component {
 
@@ -17,6 +19,10 @@ class TestSummary extends Component {
         window.location.reload();
     }
 
+    homePressed = () => {
+        this.props.history.push('/');
+    }
+
     render () {
         let scoreRows = this.props.scores.map((row, index) => {
             return (
@@ -24,20 +30,22 @@ class TestSummary extends Component {
             );
         });
 
-        let buttons = <Buttons clickedHandlers={[this.addWordsPressed, this.testAgainPressed]}>{['Add Words', 'Test Again']}</Buttons>
+        let continueButton = null;
 
-        if (this.props.isTest) {
-            buttons = <Button clicked={this.props.homeClicked}>Home</Button>
+        if (this.props.continueAvailable) {
+            continueButton = <Button clicked={this.props.continueClicked} style={{width: '180px', height: 'auto', margin: '0 0 20px 0'}}>Continue To Sentence Stage</Button>;
         }
 
         return (
             <Aux>
+                <button className={classes.HomeButton} onClick={this.homePressed}>
+                    <img alt="home" src={HomePic}/>
+                </button>
                 <h3>Test Summary</h3>
                 <Table headings={['Word', 'Score']}>
                     {scoreRows}
                 </Table>
-                <Button clicked={this.props.continueClicked}>Continue</Button>
-                {buttons}
+                {continueButton}
             </Aux>
         );
     }

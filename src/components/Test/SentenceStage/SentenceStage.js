@@ -5,6 +5,8 @@ import Button from '../../UI/Buttons/Button/Button';
 import PictureButton from '../../UI/Buttons/PictureButton/PictureButton';
 import Aux from '../../../hoc/Aux';
 import Modal from '../../UI/Modal/Modal';
+import Table from '../../UI/Table/Table';
+import TableRow from '../../UI/Table/TableRow/TableRow';
 
 import micPic from '../../../assets/images/microphone.png';
 import likePic from '../../../assets/images/like.png';
@@ -202,6 +204,7 @@ class SentenceStage extends Component {
                         <h2>{this.state.currentWord[this.state.charSet]}</h2>
                     </div>
                     <input 
+                        autoComplete="off"
                         onKeyPress={this.onInputKeyPress}
                         value={this.state.entered}
                         onChange={this.onInputChanged}
@@ -259,25 +262,14 @@ class SentenceStage extends Component {
                         top: '20%'
                     }}>
                         <h3>Finished!</h3>
-                        <h4>Your sentences:</h4>
-                        <ul style={{
-                            listStyle: "none",
-                            width: "75%",
-                            margin: "0 auto",
-                            textAlign: "left",
-                            padding: "0"
-                            }}>
+                        <Table headings={['Your sentences:']}>
                             {this.state.sentences.map((sentence, index) => {
                                 return (
-                                    <li 
-                                        key={index}
-                                        style={{
-                                            marginBottom: "10px",
-                                            borderBottom: "thin solid"
-                                        }}>{sentence}</li>
+                                    <TableRow 
+                                        key={index}>{[sentence]}</TableRow>
                                 );
                             })}
-                        </ul>
+                        </Table>
                         <Button clicked={this.onHomeClicked}>Home</Button>
                 </Modal>
             </Aux>   

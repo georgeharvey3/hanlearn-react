@@ -31,6 +31,10 @@
     display: flex;
 }
 
+.Logo:hover {
+    cursor: pointer;
+}
+
 @media (max-width: 499px) {
     .DesktopOnly {
         display: none;

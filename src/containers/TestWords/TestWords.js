@@ -34,13 +34,19 @@ class TestWords extends Component {
         let test = null;
 
         if (this.props.isTest) {
-            test = <Test isTest words={[{
-                simp: '你好',
-                trad: '你好',
-                pinyin: 'ni3 hao3',
-                meaning: 'hello/hi',
-                due_date: new Date()
-            }]} />
+            if (!this.state.isSentenceStage) {
+                test = <Test isTest words={[{
+                    simp: '你好',
+                    trad: '你好',
+                    pinyin: 'ni3 hao3',
+                    meaning: 'hello/hi',
+                    due_date: new Date()
+                }]} 
+                startSentenceStage={() => this.onStartSentenceStage([{simp: '你好', trad: '你好'}])}/>
+            } else {
+                test = <SentenceStage words={this.state.sentenceWords} />
+            }
+            
             return test;
         }
 

@@ -1,0 +1,15 @@
+.TableBoxHolder {
+    height: 220px;
+}
+
+@media (min-height: 600px) {
+    .TableBoxHolder {
+        height: 250px;
+    }
+}
+
+@media (min-height: 750px) {
+    .TableBoxHolder {
+        height: 400px;
+    }
+}

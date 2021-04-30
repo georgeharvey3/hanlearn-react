@@ -27,7 +27,9 @@ class MainBanner extends Component {
                         changed={this.props.inputChanged}
                         focussed={this.onFocusInput}
                         blurred={this.onBlurInput}/>
-                    <Button clicked={this.props.submitClicked}>Submit</Button>
+                    <Button 
+                        disabled={this.props.submitDisabled}
+                        clicked={this.props.submitClicked}>Submit</Button>
                 </form>
             </div>
         );

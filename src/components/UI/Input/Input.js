@@ -13,7 +13,10 @@ const input = props => (
         value={props.value}
         onFocus={props.focussed}
         onBlur={props.blurred}
-        autoFocus={props.autoFocus}/>
+        autoFocus={props.autoFocus}
+        autoComplete={props.autoComplete}
+        autoCorrect={props.autoCorrect}
+        spellCheck={props.spellCheck}/>
 );
 
 export default input;

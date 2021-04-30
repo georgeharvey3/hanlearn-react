@@ -10,6 +10,7 @@ import * as wordActions from '../../store/actions/index';
 import Remove from '../../components/UI/Table/TableRow/Remove/Remove';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
+import classes from './AddWords.module.css';
 
 class AddWords extends Component {
     constructor () {
@@ -84,6 +85,9 @@ class AddWords extends Component {
 
     searchForWord = (e) => {
         e.preventDefault();
+        if (this.state.newWord === "") {
+            return;
+        }
         fetch(`/api/get-word/${this.state.newWord}/${this.state.charSet}`).then(response => {
             response.json().then(data => {
                 this.handleSearchResult(data.words, this.state.newWord);
@@ -137,6 +141,14 @@ class AddWords extends Component {
             
         }
     }
+
+    convertDateString = initial => {
+        let year = initial.slice(0, 4);
+        let month = initial.slice(5, 7);
+        let day = initial.slice(8);
+
+        return [day, month, year].join("/");
+    }
     
 
     render() {
@@ -157,14 +169,14 @@ class AddWords extends Component {
                             data-orig={row.meaning}>
                                 {row.meaning}
                         </td>
-                        <td className="Disappear">{row.due_date}</td>
+                        <td className="Disappear">{this.convertDateString(row.due_date)}</td>
                         <td><Remove clicked={() => this.props.onDeleteWord(this.props.token, row.id)}/></td>
                     </tr>
                 );
             });
 
             table = (
-                <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Due Date', 'Remove']}>
+                <Table headings={['Character(s)', 'Pinyin', 'Meaning', 'Due Date (D/M/Y)', 'Remove']}>
                     {tableRows}
                 </Table>
             )
@@ -216,12 +228,15 @@ class AddWords extends Component {
                     modalClosed={this.dismissModal}>
                         <p>{this.state.errorMessage}</p>
                 </Modal>    
-                <MainBanner 
+                <MainBanner
+                    submitDisabled={this.state.newWord.length === 0} 
                     inputChanged={this.onInputChangedHandler}
                     newWord={this.state.newWord}
                     submitClicked={this.searchForWord}/>
-                {table}
-                <Button clicked={this.onTestHandler}>Test</Button>
+                <div className={classes.TableBoxHolder}>
+                    {table}
+                </div>
+                <Button disabled={this.props.words.length === 0} clicked={this.onTestHandler}>Test</Button>
             </Aux>
         );
     }
