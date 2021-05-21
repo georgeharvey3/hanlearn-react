@@ -32,33 +32,45 @@ class SentenceStage extends Component {
     componentDidMount = () => {
         this.selectNextWord();
 
-        document.addEventListener('keypress', event => {
-                
-            let sourceElement = event.target.tagName.toLowerCase();
+        document.addEventListener('keypress', this.onKeyPress);
+        document.addEventListener('keyup', this.onKeyUp);
+        document.addEventListener('keydown', this.onKeyPress);
+    }
+
+    componentWillUnmount = () => {
+        document.removeEventListener('keypress', this.onKeyPress);
+        document.removeEventListener('keyup', this.onKeyUp);
+        document.removeEventListener('keydown', this.onKeyPress);
+    }
+
+    onKeyPress = event => {
+        let sourceElement = event.target.tagName.toLowerCase();
 
             if (event.key === " " && sourceElement !== "input") {
                 this.onListenPinyin();
             }
-        });
+    }
 
-        document.addEventListener('keyup', event => {
-            if (event.ctrlKey && event.key === "m") {
-                this.onListenPinyin();
-            }        
-        });
+    onKeyUp = event => {
+        if (event.ctrlKey && event.key === "m") {
+            this.onListenPinyin();
+        }      
+        
+        //advance to next stage
+        if (this.state.finished && event.key === ' ') {
+            event.preventDefault();
+            this.onHomeClicked();
+        }
+    }
 
-        document.addEventListener('keydown', event => {
-                
-            if (event.key === "ArrowUp" && this.state.sentence !== null) {
-                this.onYesClicked();
-            }
-    
-            if (event.key === "ArrowDown" && this.state.sentence !== null) {
-                this.onNoClicked();
-            }
-        });
+    onKeyDown = event => {
+        if (event.key === "ArrowUp" && this.state.sentence !== null) {
+            this.onYesClicked();
+        }
 
-
+        if (event.key === "ArrowDown" && this.state.sentence !== null) {
+            this.onNoClicked();
+        }
     }
 
     selectNextWord = () => {
@@ -174,14 +186,25 @@ class SentenceStage extends Component {
             errorMessage: ""
         });
 
+        let result;
+
         recognition.addEventListener('result', event => {
-            let result = event.results[0][0].transcript;
+            result = event.results[0][0].transcript;
             this.setState({
                 entered: result,
                 message: ""
             });
             document.getElementById("input").focus();
         });
+
+        recognition.addEventListener('end', event => {
+            if (!result) {
+                this.setState({
+                    message: "Couldn't hear anything...",
+                });  
+            }
+        });
+
         this.setState({message: "Listening..."})
         recognition.start();
     }

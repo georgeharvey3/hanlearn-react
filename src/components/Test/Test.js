@@ -53,6 +53,7 @@ class Test extends Component {
             result: '',
             answerInput: '',
             idkDisabled: false,
+            submitDisabled: false,
             progressBar: 0,
             initNumPerms: 0,
             idkList: [],
@@ -100,7 +101,7 @@ class Test extends Component {
         });
 
         this.onInitialiseTestSet(useHandwriting);
-
+        
         document.addEventListener('keyup', this.onKeyUp);
     }
     componentWillUnmount = () => {
@@ -122,9 +123,13 @@ class Test extends Component {
     }
 
     onKeyUp = (event) => {
-        if (event.ctrlKey && event.key === "i") {
+        
+        //idk shortcut    
+        if (event.ctrlKey && event.key === "i" && !this.state.idkDisabled) {
             this.onIDontKnow();
         }
+
+        //trigger microphone shortcut
         if (this.state.answerCategory === "pinyin" && this.state.useSpeechRecognition) {
 
             let sourceElement = event.target.tagName.toLowerCase();
@@ -138,12 +143,29 @@ class Test extends Component {
             }
         }
 
+        //trigger speaker shortcut
         if (this.state.questionCategory === "pinyin" && this.state.useSound) {
             
             let sourceElement = event.target.tagName.toLowerCase();
 
             if (event.key === " " && sourceElement !== "input") {
                 this.onSpeakPinyin(this.state.chosenCharacter);
+            }
+        }
+        //focus input shortcut
+        if (document.getElementById("answer-input") !== null) {
+            if (event.ctrlKey && event.key === "b") {
+                document.getElementById("answer-input").focus();
+            }
+        }
+
+        //advance to next stage
+        if (this.state.testFinished && event.key === ' ') {
+            event.preventDefault();
+            if (this.state.sentenceWords.length > 0 || this.props.isTest) {
+                this.props.startSentenceStage(this.state.sentenceWords);
+            } else {
+                this.onHomeClicked();
             }
         }
     }
@@ -315,7 +337,7 @@ class Test extends Component {
     }
 
     onKeyPress = (e) => {
-        if (e.key !== 'Enter') {
+        if (e.key !== 'Enter' || this.state.submitDisabled || this.state.answerInput === '') {
             return;
         }
         this.onSubmitAnswer();
@@ -329,7 +351,9 @@ class Test extends Component {
     onCorrectAnswer = () => {
         this.setState({
             result: 'Correct!',
-            showInput: false
+            showInput: false,
+            idkDisabled: true,
+            submitDisabled: true
         });
         if (this.state.useSound) {
             beep.play();
@@ -358,7 +382,9 @@ class Test extends Component {
                             answerInput: '',
                             showInput: false,
                             numSpeakTries: 0,
-                            qNum: prevState.qNum + 1
+                            qNum: prevState.qNum + 1,
+                            idkDisabled: false,
+                            submitDisabled: false
                         }
                 });
                 }
@@ -503,7 +529,7 @@ class Test extends Component {
             return;
         }
         
-        this.setState({idkDisabled: true});
+        this.setState({idkDisabled: true, submitDisabled: true});
         this.setState(prevState => {
             let idkChar = prevState.testSet[prevState.perm.index][this.state.charSet];
             return {
@@ -536,7 +562,8 @@ class Test extends Component {
                         result: '',
                         answerInput: '',
                         qNum: prevState.qNum + 1,
-                        showInput: false
+                        showInput: false,
+                        submitDisabled: false
                     }
                 });
             }
@@ -635,7 +662,8 @@ class Test extends Component {
         let progressNum = Math.floor(this.state.permList.length / this.state.initNumPerms * 100);
         progressNum = progressNum ? progressNum : 0;
 
-        let inputElem = <Input 
+        let inputElem = <Input
+                            id="answer-input" 
                             keyPressed={this.onKeyPress} 
                             value={this.state.answerInput}
                             changed={this.onInputChanged}
