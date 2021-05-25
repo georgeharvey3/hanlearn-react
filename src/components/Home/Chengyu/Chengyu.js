@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import classes from './Chengyu.module.css';
 
+import Aux from '../../../hoc/Aux';
+
 class Chengyu extends Component {
 
     state = {
@@ -9,17 +11,20 @@ class Chengyu extends Component {
         incorrect: [],
         chengyu: "",
         options: [],
-        correct: ""
+        correct: "",
+        components: []
     }
 
     componentDidMount = () => {
         fetch('/api/get-chengyu')
         .then(response =>
             response.json().then(data => {
+                console.log(data)
                 this.setState({
                     chengyu: data.chengyu,
                     options: data.options,
-                    correct: data.correct
+                    correct: data.correct,
+                    components: data.char_results
                 });
             })
         .catch(error => {
@@ -42,6 +47,42 @@ class Chengyu extends Component {
     }
 
     render () {
+        let components = null;
+
+        if (this.state.finished) {
+            components = <ul style={{margin: "0px"}}>
+                            {this.state.components.map((c, index) => {
+                                let trad = "";
+                                let differentTrads = []
+
+                                for (let i = 0; i < c.trads.length; i ++) {
+                                    if (c.trads[i] !== c.char) {
+                                        differentTrads.push(c.trads[i]);
+                                    }
+                                }
+
+                                if (differentTrads.length > 0) {
+                                    trad = " (" + differentTrads.join("/") + ")";
+                                }
+
+                                return (
+                                    <Aux key={index}>
+                                        <li style={{
+                                            maxHeight: "1000px",
+                                            opacity: 1,
+                                            backgroundColor: "transparent",
+                                            color: "#AA381E"}}>
+                                            <h5 style={{
+                                                fontSize: "1.5em", 
+                                                margin: "3px auto",
+                                                fontWeight: 'normal'}}>{c.char}{trad}</h5> ({c.pinyins.join("/")}): {c.meanings.join(", ")}
+                                        </li>
+                                        <br />
+                                    </Aux>
+                                );
+                            })}
+                        </ul>
+        }
         return (
             <div className={classes.Chengyu}>
                 <h3>Chengyu Of The Day</h3>
@@ -72,6 +113,7 @@ class Chengyu extends Component {
                         );
                     })}
                 </ul>
+                {components}
             </div>
         )
     }
