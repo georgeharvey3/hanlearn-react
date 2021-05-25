@@ -8,6 +8,7 @@ import ExpBanner from '../../components/Home/ExpBanner/ExpBanner';
 import SignUpBanner from '../../components/Home/SignUpBanner/SignUpBanner';
 import AccountSummary from '../../components/Home/AccountSummary/AccountSummary';
 import Footer from '../../components/Home/Footer/Footer';
+import Chengyu from '../../components/Home/Chengyu/Chengyu';
 
 import addCap from '../../assets/images/homepage/add.png';
 import testCap from '../../assets/images/homepage/test.png';
@@ -83,6 +84,14 @@ class Home extends Component {
             <Aux>
                 <MainBanner />
                 {firstBanner}
+                <Chengyu 
+                    chengyu="数一数二" 
+                    options={
+                    ["not knowing the right way",
+                    "the best; considered among the best",
+                    "to enjoy others’ misfortunes",
+                    "to blindly imitate someone"]}
+                    correct="the best; considered among the best"/>
                 <ExpBanner priority='left' img={addCap} heading={'Build your word bank'}>
                     Simply search for the Chinese word you want to add and we'll give you the pinyin pronunctiation and the meaning. 
                     Don't like the translation? Feel free to add your own!

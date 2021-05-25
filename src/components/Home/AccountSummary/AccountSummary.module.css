@@ -1,4 +1,4 @@
-.SignUpBanner {
+.AccountSummary {
     width: 95%;
     height: auto;
     border-radius: 10px;
@@ -18,11 +18,11 @@
 }
 
 @media (max-width: 499px) {
-    .SignUpBanner{
+    .AccountSummary{
         font-size: 1.1em;
     }
 } 
 
-.SignUpBanner h3, p {
+.AccountSummary h3, p {
     margin: 10px 0;
 }
