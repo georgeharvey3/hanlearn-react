@@ -205,7 +205,10 @@ class SentenceStage extends Component {
             }
         });
 
-        this.setState({message: "Listening..."})
+        recognition.addEventListener('audiostart', event => {
+            this.setState({message: "Listening..."})
+        });
+
         recognition.start();
     }
 

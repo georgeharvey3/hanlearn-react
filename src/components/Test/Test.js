@@ -516,7 +516,11 @@ class Test extends Component {
                 
             }
         });
-        this.setState({result: "Listening..."})
+
+        recognition.addEventListener('audiostart', event => {
+            this.setState({message: "Listening..."})
+        });
+        
         recognition.start();
 
     }
