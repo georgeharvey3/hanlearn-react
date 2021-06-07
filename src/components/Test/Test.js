@@ -508,7 +508,7 @@ class Test extends Component {
         });
 
         recognition.addEventListener('end', event => {
-            if (!result) {
+            if (!result && !this.state.idkDisabled) {
                 this.setState({
                     result: "Couldn't hear anything...",
                     showInput: true
@@ -518,14 +518,18 @@ class Test extends Component {
         });
 
         recognition.addEventListener('audiostart', event => {
-            this.setState({message: "Listening..."})
+            this.setState({result: "Listening..."});
         });
-        
+
         recognition.start();
 
     }
 
     onIDontKnow = () => {
+
+        if (this.state.recognition !== null) {
+            this.state.recognition.abort();
+        }
         
         let charDivExists = this.state.answerCategory === 'character' && this.state.useHandwriting;
         if (charDivExists) {
