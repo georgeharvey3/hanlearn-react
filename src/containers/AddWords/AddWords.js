@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import Aux from '../../hoc/Aux';
 import Modal from '../../components/UI/Modal/Modal';
@@ -48,7 +49,9 @@ class AddWords extends Component {
     }
 
     componentDidMount = () => {
-        this.props.onInitWords(this.props.token);
+        if (this.props.token !== null) {
+            this.props.onInitWords(this.props.token);
+        }
     }
 
     handleSearchResult = (res, searchedWord) => {
@@ -152,6 +155,10 @@ class AddWords extends Component {
     
 
     render() {
+
+        if (this.props.token === null) {
+            return <Redirect to="/"/>;
+        }
 
         let table = this.props.loading ? <Spinner /> : null;
         

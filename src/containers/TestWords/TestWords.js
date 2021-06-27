@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as wordActions from '../../store/actions/index';
+import { Redirect } from 'react-router-dom';
 
 import Modal from '../../components/UI/Modal/Modal';
 import Button from '../../components/UI/Buttons/Button/Button';
@@ -14,7 +15,7 @@ class TestWords extends Component {
     }
 
     componentDidMount () {
-        if (!this.props.isTest) {
+        if (!this.props.isTest && this.props.token !== null) {
             this.props.onInitWords(this.props.token);
         }
     }    
@@ -32,6 +33,10 @@ class TestWords extends Component {
 
     render () {
         let test = null;
+
+        if (this.props.token === null) {
+            return <Redirect to="/"/>;
+        }
 
         if (this.props.isTest) {
             if (!this.state.isSentenceStage) {

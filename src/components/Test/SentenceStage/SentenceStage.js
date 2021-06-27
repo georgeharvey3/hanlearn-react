@@ -34,26 +34,30 @@ class SentenceStage extends Component {
 
         document.addEventListener('keypress', this.onKeyPress);
         document.addEventListener('keyup', this.onKeyUp);
-        document.addEventListener('keydown', this.onKeyPress);
+        document.addEventListener('keydown', this.onKeyDown);
     }
 
     componentWillUnmount = () => {
         document.removeEventListener('keypress', this.onKeyPress);
         document.removeEventListener('keyup', this.onKeyUp);
-        document.removeEventListener('keydown', this.onKeyPress);
+        document.removeEventListener('keydown', this.onKeyDown);
     }
 
     onKeyPress = event => {
         let sourceElement = event.target.tagName.toLowerCase();
 
             if (event.key === " " && sourceElement !== "input") {
-                this.onListenPinyin();
+                if (!this.state.finished) {
+                    this.onListenPinyin();
+                }
             }
     }
 
     onKeyUp = event => {
         if (event.ctrlKey && event.key === "m") {
-            this.onListenPinyin();
+            if (!this.state.finished) {
+                this.onListenPinyin();
+            }       
         }      
         
         //advance to next stage

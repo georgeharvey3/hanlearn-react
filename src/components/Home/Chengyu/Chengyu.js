@@ -19,7 +19,6 @@ class Chengyu extends Component {
         fetch('/api/get-chengyu')
         .then(response =>
             response.json().then(data => {
-                console.log(data)
                 this.setState({
                     chengyu: data.chengyu,
                     options: data.options,

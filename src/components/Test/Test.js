@@ -135,11 +135,15 @@ class Test extends Component {
             let sourceElement = event.target.tagName.toLowerCase();
 
             if (event.key === " " && sourceElement !== "input") {
-                this.onListenPinyin();
+                if (!this.state.testFinished) {
+                    this.onListenPinyin();
+                }
             }
             
             if (event.ctrlKey && event.key === "m") {
-                this.onListenPinyin();
+                if (!this.state.testFinished) {
+                    this.onListenPinyin();
+                }            
             }
         }
 
@@ -155,7 +159,13 @@ class Test extends Component {
         //focus input shortcut
         if (document.getElementById("answer-input") !== null) {
             if (event.ctrlKey && event.key === "b") {
-                document.getElementById("answer-input").focus();
+                document.getElementById("answer-input").focus();   
+            }
+        }
+
+        if (document.getElementById("pinyin-input") !== null) {
+            if (event.ctrlKey && event.key === "b") {
+                document.getElementById("pinyin-input").focus();
             }
         }
 
@@ -601,7 +611,12 @@ class Test extends Component {
             }
             if (count === 0 && word.bank === 1)  {
                 sentenceWords.push(word);
+            } 
+            //TEMP
+            else {
+                sentenceWords.push(word);
             }
+            //TEMP
 
             wordScores.push({
                 char: word[this.state.charSet],
@@ -701,6 +716,7 @@ class Test extends Component {
                         clicked={() => this.onListenPinyin()}/>
                     {this.state.showInput ? (
                         <Input 
+                        id="pinyin-input"
                         keyPressed={this.onKeyPress} 
                         value={this.state.answerInput}
                         changed={this.onInputChanged}

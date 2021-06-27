@@ -19,7 +19,15 @@ import * as actions from '../../store/actions/index';
 class Home extends Component {
 
     state = {
-        numDue: 0
+        numDue: 0,
+        numTot: "why"
+    }
+
+    componentDidMount = () => {
+        if (this.props.isAuthenticated) {
+            this.getDueWords();
+            this.getUserWords();
+        }
     }
 
     onClickSignUp = () => {
@@ -66,18 +74,11 @@ class Home extends Component {
         }))
     }
 
-    componentDidMount = () => {
-        if (this.props.isAuthenticated) {
-            this.props.onInitWords(this.props.token);
-            this.getDueWords();
-        }
-    }
-
     render () {
         let firstBanner = <SignUpBanner signUpClicked={this.onClickSignUp} tryOutClicked={this.onTryOutClicked}/>;
 
         if (this.props.isAuthenticated) {
-            firstBanner = <AccountSummary numDue={this.state.numDue} numTot={this.props.numTot} testClicked={this.onTestClicked}/>;
+            firstBanner = <AccountSummary numDue={this.state.numDue} numTot={this.state.numTot} testClicked={this.onTestClicked}/>;
         }
 
         return (
@@ -114,7 +115,6 @@ const mapStateToProps = (state) => {
     return {
         isAuthenticated: state.auth.token !== null,
         token: state.auth.token,
-        numTot: state.addWords.words.length
     }
 }
 

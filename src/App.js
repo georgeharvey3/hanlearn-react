@@ -17,6 +17,7 @@ class App extends Component {
   constructor (props) {
     super(props);
     this.props.onTryAutoLogin();
+    window.speechSynthesis.getVoices();
 
     try {
         let speechTest = new window.webkitSpeechRecognition();
