@@ -20,7 +20,7 @@ class Home extends Component {
 
     state = {
         numDue: 0,
-        numTot: "why"
+        numTot: 0
     }
 
     componentDidMount = () => {

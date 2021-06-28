@@ -612,11 +612,6 @@ class Test extends Component {
             if (count === 0 && word.bank === 1)  {
                 sentenceWords.push(word);
             } 
-            //TEMP
-            else {
-                sentenceWords.push(word);
-            }
-            //TEMP
 
             wordScores.push({
                 char: word[this.state.charSet],
