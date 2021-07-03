@@ -144,7 +144,7 @@ class SentenceStage extends Component {
                     message: "Translation:"
                 })
             })
-        .catch(function(error) {
+        .catch((error) => {
             console.log("Fetch error: " + error);
             this.setState({
                 message: "Problem translating, please try again"
