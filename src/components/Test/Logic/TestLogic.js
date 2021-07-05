@@ -22,7 +22,6 @@ export const setPermList = function (testSet, includeHandwriting) {
 
     if (includeHandwriting) {
         qaCombinations = ['CP', 'CM', 'PC', 'PM', 'MP', 'MC'];
-        //qaCombinations = ['CP', 'CM'];
     } else {
         qaCombinations = ['PC', 'PM', 'MP', 'MC'];
     }
@@ -31,6 +30,11 @@ export const setPermList = function (testSet, includeHandwriting) {
 
     for (let i = 0; i < nums.length; i++) {
         for (let j = 0; j < qaCombinations.length; j++) {
+            console.log(testSet[i]);
+            if (testSet[i]['simp'].length === 1 && qaCombinations[j][1] === "P") {
+                continue;
+            }
+
             permList.push({"index": nums[i].toString(),
                            "aCategory": qaCombinations[j][0],
                            "qCategory": qaCombinations[j][1]})
