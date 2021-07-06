@@ -30,7 +30,6 @@ export const setPermList = function (testSet, includeHandwriting) {
 
     for (let i = 0; i < nums.length; i++) {
         for (let j = 0; j < qaCombinations.length; j++) {
-            console.log(testSet[i]);
             if (testSet[i]['simp'].length === 1 && qaCombinations[j][1] === "P") {
                 continue;
             }

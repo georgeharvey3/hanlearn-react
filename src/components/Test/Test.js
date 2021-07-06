@@ -654,6 +654,8 @@ class Test extends Component {
                 if (!response.ok) {
                     console.log(`Problem. Status Code: ${response.status}`);
                     return;
+                } else {
+                    console.log("update finished");
                 }
             }
         )
