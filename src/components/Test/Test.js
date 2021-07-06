@@ -640,7 +640,6 @@ class Test extends Component {
             method: "POST",
             credentials: "include",
             body: JSON.stringify({
-                user_id: 1,
                 scores: testResults
             }),
             cache: "no-cache",
@@ -655,7 +654,8 @@ class Test extends Component {
                     console.log(`Problem. Status Code: ${response.status}`);
                     return;
                 } else {
-                    console.log("update finished");
+                    console.log("new dates:");
+                    console.log(response)
                 }
             }
         )
