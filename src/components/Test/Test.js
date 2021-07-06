@@ -654,8 +654,10 @@ class Test extends Component {
                     console.log(`Problem. Status Code: ${response.status}`);
                     return;
                 } else {
-                    console.log("new dates:");
-                    console.log(response)
+                    response.then(data => {
+                        console.log("new dates:");
+                        console.log(data['new_dates']);
+                    })
                 }
             }
         )
