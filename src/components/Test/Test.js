@@ -648,18 +648,10 @@ class Test extends Component {
                 "x-access-token": this.props.token
             })
         })
-        .then(
-            function(response) {
-                if (!response.ok) {
-                    console.log(`Problem. Status Code: ${response.status}`);
-                    return;
-                } else {
-                    response.then(data => {
-                        console.log("new dates:");
-                        console.log(data['new_dates']);
-                    })
-                }
-            }
+        .then(response => response.json().then(data => {
+            console.log("new dates:");
+            console.log(data['new_dates']);
+            })
         )
         .catch(function(error) {
             console.log("Fetch error: " + error);
