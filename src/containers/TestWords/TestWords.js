@@ -55,8 +55,6 @@ class TestWords extends Component {
             return test;
         }
 
-        
-
         if (this.props.words.length > 0) {
             if (!this.state.isSentenceStage) {
                 test = <Test 

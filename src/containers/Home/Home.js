@@ -27,6 +27,8 @@ class Home extends Component {
         if (this.props.isAuthenticated) {
             this.getDueWords();
             this.getUserWords();
+            console.log("calling init words");
+            this.props.onInitWords(this.props.token);
         }
     }
 
